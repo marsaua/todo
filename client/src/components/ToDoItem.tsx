@@ -1,4 +1,6 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Typography } from "@mui/material";
+import UpdateTodoButton from "./buttons/UpdateTodoButoon";
+import DeleteTodoButton from "./buttons/DeleteTodoButton";
 
 export default function ToDoItem({
   card,
@@ -7,12 +9,12 @@ export default function ToDoItem({
   card: any;
   categories: any;
 }) {
-  console.log(card);
   return (
     <Card
       key={card.id}
       sx={{
-        maxWidth: "350px",
+        maxWidth: "400px",
+        minWidth: "250px",
         backgroundColor: categories.find(
           (category: any) => category.title === card.category.toLowerCase()
         )?.color,
@@ -22,6 +24,17 @@ export default function ToDoItem({
         <Typography variant="h4">{card.title}</Typography>
         <Typography variant="body1">{card.content}</Typography>
       </CardContent>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 2,
+          marginBottom: 2,
+        }}
+      >
+        <UpdateTodoButton card={card} />
+        <DeleteTodoButton card={card} />
+      </Box>
     </Card>
   );
 }

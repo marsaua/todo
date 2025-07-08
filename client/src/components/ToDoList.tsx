@@ -19,7 +19,13 @@ export default async function ToDoList({ category }: { category?: string }) {
     ? data.filter((card: any) => card.category.toLowerCase() === category)
     : data;
   return (
-    <Box sx={{ display: "flex", width: "100%", flexWrap: "wrap", gap: 4 }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+        gap: 4,
+      }}
+    >
       {filteredData.map((card: any) => (
         <ToDoItem key={card.id} card={card} categories={categories} />
       ))}
