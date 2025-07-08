@@ -1,10 +1,10 @@
 import TodoList from "@/components/ToDoList";
 
-export default async function CategoryPage({
+export default function CategoryPage({
   params,
 }: {
-  params: Promise<{ category: string }>;
+  params: { category: string };
 }) {
-  const { category } = await params;
+  const { category } = params;
   return <TodoList category={category} />;
 }

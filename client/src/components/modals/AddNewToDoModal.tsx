@@ -1,3 +1,4 @@
+"use client";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +22,21 @@ export default function AddNewToDoModal({
   handleClose: () => void;
 }) {
   const [category, setCategory] = useState("");
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  console.log("Payload:", { title, content, category });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    const title = formJson.title as string;
-    const description = formJson.description as string;
-    console.log(title, description, category);
+    await fetch("http://localhost:4000/todos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, content, category }),
+    });
     handleClose();
   };
   return (
@@ -49,23 +57,29 @@ export default function AddNewToDoModal({
             type="text"
             fullWidth
             variant="standard"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <TextareaAutosize
             autoFocus
             required
-            id="description"
-            name="description"
-            placeholder="Description"
+            id="content"
+            name="content"
+            placeholder="Content"
             minRows={6}
             style={{ width: "100%", marginTop: "16px" }}
-            aria-label="description"
+            aria-label="content"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
           />
           <FormControl sx={{ width: "100%", marginTop: "16px" }}>
             <InputLabel id="demo-simple-select-label">Category</InputLabel>
             <Select
+              required
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               value={category}
+              name="category"
               label="Category"
               onChange={(e) => setCategory(e.target.value)}
             >

@@ -7,6 +7,7 @@ export default function ToDoItem({
   card: any;
   categories: any;
 }) {
+  console.log(card);
   return (
     <Card
       key={card.id}
@@ -19,7 +20,7 @@ export default function ToDoItem({
     >
       <CardContent>
         <Typography variant="h4">{card.title}</Typography>
-        <Typography variant="body1">{card.description}</Typography>
+        <Typography variant="body1">{card.content}</Typography>
       </CardContent>
     </Card>
   );
