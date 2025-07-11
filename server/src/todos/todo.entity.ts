@@ -1,5 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { TodoCategory } from './enums/todoCategory.enum';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  JoinColumn,
+} from 'typeorm';
+import { Category } from 'src/categories/category.entity';
 
 @Entity()
 export class Todo {
@@ -21,10 +27,14 @@ export class Todo {
   content: string;
 
   @Column({
-    type: 'enum',
-    enum: TodoCategory,
+    type: 'int',
     nullable: false,
-    default: TodoCategory.PERSONAL,
   })
-  category: TodoCategory;
+  categoryId: number;
+
+  @ManyToOne(() => Category, (category) => category.todos, {
+    eager: true,
+  })
+  @JoinColumn({ name: 'categoryId' })
+  category: Category;
 }

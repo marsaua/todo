@@ -1,6 +1,8 @@
-import { IsEnum, IsString, MaxLength } from 'class-validator';
+import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { TodoCategory } from '../enums/todoCategory.enum';
+import { ManyToOne, JoinColumn } from 'typeorm';
+import { IsNumber } from 'class-validator';
+import { Category } from 'src/categories/category.entity';
 
 export class CreateTodoDto {
   @ApiProperty({
@@ -20,10 +22,10 @@ export class CreateTodoDto {
   content: string;
 
   @ApiProperty({
-    description: 'Todo category',
-    example: 'personal',
+    description: 'Todo category id',
+    example: 1,
   })
-  @IsEnum(TodoCategory)
-  @MaxLength(516)
-  category: TodoCategory;
+  @IsNumber()
+  @IsNotEmpty()
+  categoryId: number;
 }

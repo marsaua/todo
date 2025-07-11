@@ -4,16 +4,19 @@ import { AppService } from './app.service';
 import { TodosModule } from './todos/todos.module';
 import { Todo } from './todos/todo.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoriesModule } from './categories/categories.module';
+import { Category } from './categories/category.entity';
 
 @Module({
   imports: [
     TodosModule,
+    CategoriesModule,
     TypeOrmModule.forRootAsync({
       imports: [],
       inject: [],
       useFactory: () => ({
         type: 'postgres',
-        entities: [Todo],
+        entities: [Todo, Category],
         synchronize: true,
         host: 'localhost',
         port: 5433,
@@ -22,6 +25,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: 'nestjs-test-app',
       }),
     }),
+    TypeOrmModule.forFeature([Todo, Category]),
   ],
   controllers: [AppController],
   providers: [AppService],

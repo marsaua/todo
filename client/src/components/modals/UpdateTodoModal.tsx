@@ -18,12 +18,14 @@ export default function UpdateTodoModal({
   open,
   handleClose,
   card,
+  categories,
 }: {
   open: boolean;
   handleClose: () => void;
   card: any;
+  categories: any;
 }) {
-  const [category, setCategory] = useState(card.category);
+  const [category, setCategory] = useState(card.category.id);
   const [title, setTitle] = useState(card.title);
   const [content, setContent] = useState(card.content);
   const id = card.id;
@@ -37,7 +39,7 @@ export default function UpdateTodoModal({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, category }),
+      body: JSON.stringify({ title, content, categoryId: category }),
     });
     handleClose();
   };
@@ -85,8 +87,11 @@ export default function UpdateTodoModal({
               label="Category"
               onChange={(e) => setCategory(e.target.value)}
             >
-              <MenuItem value={"personal"}>Personal</MenuItem>
-              <MenuItem value={"work"}>Work</MenuItem>
+              {categories.map((item: any) => (
+                <MenuItem key={item.id} value={item.id}>
+                  {item.title}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <DialogActions>

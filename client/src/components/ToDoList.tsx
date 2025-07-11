@@ -2,12 +2,11 @@ import { Box } from "@mui/material";
 import ToDoItem from "./ToDoItem";
 import AddTodoItem from "./AddTodoItem";
 
-const categories = [
-  { id: 1, title: "personal", color: "#FFCCCD" },
-  { id: 2, title: "work", color: "#AFDDD5" },
-];
-
 export default async function ToDoList({ category }: { category?: string }) {
+  const categories = await fetch("http://localhost:4000/categories").then(
+    (res) => res.json()
+  );
+  console.log(categories);
   const fetchTodos = async () => {
     const response = await fetch("http://localhost:4000/todos");
     const data = await response.json();
@@ -16,7 +15,7 @@ export default async function ToDoList({ category }: { category?: string }) {
   const data = await fetchTodos();
   console.log(data);
   const filteredData = category
-    ? data.filter((card: any) => card.category.toLowerCase() === category)
+    ? data.filter((card: any) => card.category.title.toLowerCase() === category)
     : data;
   return (
     <Box

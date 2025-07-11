@@ -3,5 +3,5 @@ Content-Type: application/json
 {
     "title": "Todo title",
     "content": "Todo content",
-    "category": "personal"
+    "categoryId": 2
 }

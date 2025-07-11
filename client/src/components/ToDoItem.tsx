@@ -16,7 +16,8 @@ export default function ToDoItem({
         maxWidth: "400px",
         minWidth: "250px",
         backgroundColor: categories.find(
-          (category: any) => category.title === card.category.toLowerCase()
+          (category: any) =>
+            category.title === card.category.title.toLowerCase()
         )?.color,
       }}
     >
@@ -32,7 +33,7 @@ export default function ToDoItem({
           marginBottom: 2,
         }}
       >
-        <UpdateTodoButton card={card} />
+        <UpdateTodoButton card={card} categories={categories} />
         <DeleteTodoButton card={card} />
       </Box>
     </Card>
