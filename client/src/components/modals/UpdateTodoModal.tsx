@@ -25,24 +25,22 @@ export default function UpdateTodoModal({
   card: any;
   categories: any;
 }) {
-  const [category, setCategory] = useState(card.category.id);
   const [title, setTitle] = useState(card.title);
   const [content, setContent] = useState(card.content);
+  const [categoryId, setCategoryId] = useState(card.category.id);
   const id = card.id;
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    event.preventDefault();
+  const handleSubmit = async (): Promise<void> => {
     await fetch(`http://localhost:4000/todos/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, categoryId: category }),
+      body: JSON.stringify({ title, content, categoryId: categoryId }),
     });
     handleClose();
   };
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
       <DialogTitle>Update To Do</DialogTitle>
@@ -82,10 +80,10 @@ export default function UpdateTodoModal({
               required
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={category}
+              value={categoryId}
               name="category"
               label="Category"
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => setCategoryId(e.target.value)}
             >
               {categories.map((item: any) => (
                 <MenuItem key={item.id} value={item.id}>

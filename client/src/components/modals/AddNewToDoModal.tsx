@@ -13,7 +13,7 @@ import {
   MenuItem,
   TextareaAutosize,
 } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 export default function AddNewToDoModal({
   open,
   handleClose,
@@ -21,24 +21,36 @@ export default function AddNewToDoModal({
   open: boolean;
   handleClose: () => void;
 }) {
-  const [category, setCategory] = useState("");
+  const [categoryId, setCategoryId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  console.log("Payload:", { title, content, category });
+  const [categories, setCategories] = useState([]);
+  console.log("Payload:", { title, content, categoryId });
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
-    event.preventDefault();
+  const handleSubmit = async (): Promise<void> => {
     await fetch("http://localhost:4000/todos", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content, category }),
+      body: JSON.stringify({ title, content, categoryId }),
     });
     handleClose();
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
       <DialogTitle>Add New To Do</DialogTitle>
@@ -78,13 +90,17 @@ export default function AddNewToDoModal({
               required
               labelId="demo-simple-select-label"
               id="demo-simple-select"
-              value={category}
+              value={categoryId}
               name="category"
               label="Category"
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => setCategoryId(e.target.value)}
             >
-              <MenuItem value={"personal"}>Personal</MenuItem>
-              <MenuItem value={"work"}>Work</MenuItem>
+              {categories.length > 0 &&
+                categories.map((category: any) => (
+                  <MenuItem key={category.id} value={category.id}>
+                    {category.title}
+                  </MenuItem>
+                ))}
             </Select>
           </FormControl>
           <DialogActions>

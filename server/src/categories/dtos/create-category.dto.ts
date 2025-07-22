@@ -9,4 +9,12 @@ export class CreateCategoryDto {
     example: 'Category title',
   })
   title: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Category color',
+    example: '#FFCCCD',
+  })
+  color: string;
 }

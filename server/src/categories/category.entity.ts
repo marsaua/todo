@@ -1,16 +1,21 @@
-import { Entity, JoinColumn, OneToMany } from 'typeorm';
+import { Entity } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm';
 import { Column } from 'typeorm';
-import { Todo } from '../todos/todo.entity';
-
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    nullable: false,
+  })
   title: string;
 
-  @OneToMany(() => Todo, (todo) => todo.category)
-  todos: Todo[];
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: '#cccccc',
+  })
+  color: string;
 }

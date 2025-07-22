@@ -11,19 +11,19 @@ export class CategoriesService {
   ) {}
 
   public async findAll() {
-    return await this.categoryRepository.find({
-      relations: ['todos'],
-    });
+    return await this.categoryRepository.find({});
   }
 
   public async findCategoryById(id: number) {
     return await this.categoryRepository.findOne({
       where: { id },
-      relations: ['todos'],
     });
   }
-  public async createCategory(title: string) {
-    const newCategory = this.categoryRepository.create({ title });
+  public async createCategory(title: string, color: string) {
+    const newCategory = this.categoryRepository.create({ title, color });
     return await this.categoryRepository.save(newCategory);
+  }
+  public async deleteCategory(id: number) {
+    return await this.categoryRepository.delete(id);
   }
 }

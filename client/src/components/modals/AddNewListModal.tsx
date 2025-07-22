@@ -7,6 +7,8 @@ import {
   Button,
   TextField,
 } from "@mui/material";
+import { useState } from "react";
+import getRandomColor from "@/halpers/randomColor";
 
 export default function AddNewListModal({
   open,
@@ -18,13 +20,17 @@ export default function AddNewListModal({
   const handleClose = () => {
     onClose();
   };
+  const [title, setTitle] = useState("");
+  const color = getRandomColor();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const formJson = Object.fromEntries(formData.entries());
-    const title = formJson.title as string;
-    console.log(title);
+    fetch("http://localhost:4000/categories", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, color }),
+    });
     handleClose();
   };
 
@@ -46,6 +52,8 @@ export default function AddNewListModal({
             type="text"
             fullWidth
             variant="standard"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
           />
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>

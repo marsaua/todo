@@ -9,6 +9,8 @@ export default function ToDoItem({
   card: any;
   categories: any;
 }) {
+  console.log(categories);
+  console.log(card);
   return (
     <Card
       key={card.id}
@@ -16,14 +18,14 @@ export default function ToDoItem({
         maxWidth: "400px",
         minWidth: "250px",
         backgroundColor: categories.find(
-          (category: any) =>
-            category.title === card.category.title.toLowerCase()
+          (category: any) => category.id === card.categoryId
         )?.color,
       }}
     >
       <CardContent>
         <Typography variant="h4">{card.title}</Typography>
         <Typography variant="body1">{card.content}</Typography>
+        <Typography variant="body1">{card.category.title}</Typography>
       </CardContent>
       <Box
         sx={{

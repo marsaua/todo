@@ -48,6 +48,15 @@ export class TodosService {
     todo.title = updateTodoDto.title || todo.title;
     todo.content = updateTodoDto.content || todo.content;
     todo.categoryId = updateTodoDto.categoryId || todo.categoryId;
+    if (updateTodoDto.categoryId) {
+      const category = await this.categoriesService.findCategoryById(
+        updateTodoDto.categoryId,
+      );
+      if (!category) {
+        throw new Error('Category not found');
+      }
+      todo.category = category;
+    }
     return this.todoRepository.save(todo);
   }
   public async delete(id: number) {

@@ -12,12 +12,13 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "@mui/material/Link";
 import { Button } from "@mui/material";
 import AddNewListModal from "@/components/modals/AddNewListModal";
-
+import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteCategoryModal from "@/components/modals/DeleteCategoryModal";
 export default function ProtectedLayout({
   children,
 }: {
@@ -27,6 +28,14 @@ export default function ProtectedLayout({
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
+  const [categories, setCategories] = React.useState([]);
+  const [openDelete, setOpenDelete] = React.useState(false);
+  const [id, setId] = React.useState(0);
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setId(0);
+  };
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -34,16 +43,26 @@ export default function ProtectedLayout({
   const handleFilter = (category: string) => {
     router.push(`/${category.toLowerCase()}`);
   };
-  const categories = [
-    { id: 1, title: "personal", color: "#FFCCCD" },
-    { id: 2, title: "work", color: "#AFDDD5" },
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/categories");
+        const data = await res.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+
   const drawer = (
     <Box>
       <List>
@@ -64,18 +83,36 @@ export default function ProtectedLayout({
           >
             <Box
               sx={{
-                width: "20px",
-                height: "20px",
+                minWidth: "20px",
+                minHeight: "20px",
                 backgroundColor: cat.color,
                 borderRadius: "50%",
+                cursor: "pointer",
+                border: "1px solid #ccc",
               }}
             ></Box>
             <Link
               href={`/${cat.title}`}
-              onClick={() => handleFilter(cat.title)}
+              onClick={() => setOpenDelete(true)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 2,
+                width: "100%",
+              }}
             >
               {cat.title.charAt(0).toUpperCase() + cat.title.slice(1)}
             </Link>
+            {!["work", "personal"].includes(cat.title.toLowerCase()) && (
+              <DeleteIcon
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  setOpenDelete(true);
+                  setId(cat.id);
+                }}
+              />
+            )}
           </ListItem>
         ))}
         <ListItem>
@@ -154,6 +191,11 @@ export default function ProtectedLayout({
         </Box>
       </Box>
       <AddNewListModal open={open} onClose={handleClose} />
+      <DeleteCategoryModal
+        open={openDelete}
+        onClose={handleCloseDelete}
+        id={id}
+      />
     </>
   );
 }
