@@ -6,7 +6,7 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import { useNotification } from "@/hooks/useNotification";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function DeleteCategoryModal({
   open,
@@ -17,7 +17,7 @@ export default function DeleteCategoryModal({
   onClose: () => void;
   id: number;
 }) {
-  const { showSuccess, showError, Notification } = useNotification();
+  const { showSuccess, showError } = useNotification();
   const handleSubmit = async (id: number) => {
     try {
       const res = await fetch(`http://localhost:4000/categories/${id}`, {
@@ -29,12 +29,10 @@ export default function DeleteCategoryModal({
       if (!res.ok) {
         showError(data.message || "Failed to delete category");
       } else {
-        showSuccess("Category deleted successfully");
         onClose();
       }
     } catch (error: any) {
       showError(error.message || "Something went wrong");
-      onClose();
     }
   };
 
@@ -50,7 +48,6 @@ export default function DeleteCategoryModal({
           <Button onClick={() => handleSubmit(id)}>Delete</Button>
         </DialogActions>
       </DialogContent>
-      <Notification />
     </Dialog>
   );
 }

@@ -14,6 +14,8 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import { useState } from "react";
+import { useNotification } from "@/context/NotificationContext";
+
 export default function UpdateTodoModal({
   open,
   handleClose,
@@ -30,15 +32,22 @@ export default function UpdateTodoModal({
   const [categoryId, setCategoryId] = useState(card.category.id);
   const id = card.id;
 
+  const { showError } = useNotification();
+
   const handleSubmit = async (): Promise<void> => {
-    await fetch(`http://localhost:4000/todos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, content, categoryId: categoryId }),
-    });
-    handleClose();
+    try {
+      await fetch(`http://localhost:4000/todos/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, content, categoryId: categoryId }),
+      });
+      handleClose();
+    } catch (error: any) {
+      showError(error.message || "Something went wrong");
+      handleClose();
+    }
   };
 
   return (

@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import { Button } from "@mui/material";
 import getQueryClient from "@/lib/getQueryClient";
+import { useNotification } from "@/context/NotificationContext";
+
 export default function DeleteTodoModal({
   open,
   handleClose,
@@ -18,15 +20,24 @@ export default function DeleteTodoModal({
   card: any;
 }) {
   const queryClient = getQueryClient();
-  const handleDelete = () => {
-    fetch(`http://localhost:4000/todos/${card.id}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
-    handleClose();
+  const { showError } = useNotification();
+  const handleDelete = async () => {
+    try {
+      const res = await fetch(`http://localhost:4000/todos/${card.id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Failed to delete todo");
+      }
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      handleClose();
+    } catch (error: any) {
+      showError(error.message || "Something went wrong");
+    }
   };
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">

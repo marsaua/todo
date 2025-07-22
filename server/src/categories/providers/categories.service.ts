@@ -1,29 +1,112 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Category } from '../category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Todo } from 'src/todos/todo.entity';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Todo)
+    private readonly todoRepository: Repository<Todo>,
   ) {}
 
   public async findAll() {
-    return await this.categoryRepository.find({});
+    let categories: Category[];
+    try {
+      categories = await this.categoryRepository.find({});
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    return categories;
   }
 
   public async findCategoryById(id: number) {
-    return await this.categoryRepository.findOne({
-      where: { id },
-    });
+    let category: Category | null;
+    try {
+      category = await this.categoryRepository.findOne({
+        where: { id },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    if (!category) {
+      throw new BadRequestException(
+        'Category not found. Please refresh the page.',
+      );
+    }
+    return category;
   }
+
   public async createCategory(title: string, color: string) {
+    let category: Category;
+    let categoryExists: Category | null;
+
+    try {
+      categoryExists = await this.categoryRepository.findOne({
+        where: { title },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    if (categoryExists) {
+      throw new BadRequestException(
+        'Category already exists. Please try again.',
+      );
+    }
+
     const newCategory = this.categoryRepository.create({ title, color });
-    return await this.categoryRepository.save(newCategory);
+    try {
+      category = await this.categoryRepository.save(newCategory);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    return category;
   }
+
   public async deleteCategory(id: number) {
-    return await this.categoryRepository.delete(id);
+    let category: Category | null;
+    try {
+      category = await this.categoryRepository.findOne({
+        where: { id },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    if (!category) {
+      throw new BadRequestException(
+        'Category not found. Please refresh the page.',
+      );
+    }
+    try {
+      await this.categoryRepository.delete(id);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    return category;
   }
 }

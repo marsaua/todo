@@ -9,6 +9,8 @@ import { Category } from './categories/category.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { databaseConfig } from './config/database.config';
 import appConfig from './config/app.config';
+import environmentValidation from './config/environment.validation';
+import { join } from 'path';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -16,9 +18,10 @@ const ENV = process.env.NODE_ENV;
     TodosModule,
     CategoriesModule,
     ConfigModule.forRoot({
+      envFilePath: join(process.cwd(), `.env.${ENV}`),
       isGlobal: true,
-      envFilePath: !ENV ? '.env' : `.env.${ENV}`,
       load: [appConfig, databaseConfig],
+      validationSchema: environmentValidation,
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

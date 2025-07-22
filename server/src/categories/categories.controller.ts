@@ -6,11 +6,15 @@ import {
 import { CategoriesService } from './providers/categories.service';
 import { Get, Param, Post, Body, Delete } from '@nestjs/common';
 import { CreateCategoryDto } from './dtos/create-category.dto';
-import { QueryFailedError } from 'typeorm';
+import { Todo } from 'src/todos/todo.entity';
+import { TodosService } from 'src/todos/providers/todos.service';
 
 @Controller('categories')
 export class CategoriesController {
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    private readonly todosService: TodosService,
+    private readonly categoriesService: CategoriesService,
+  ) {}
   @Get()
   public async getAllCategories() {
     return await this.categoriesService.findAll();
@@ -28,15 +32,20 @@ export class CategoriesController {
   }
   @Delete(':id')
   public async deleteCategory(@Param('id') id: number) {
+    let todos: Todo[];
     try {
-      return await this.categoriesService.deleteCategory(id);
+      todos = await this.todosService.findTodosByCategoryId(id);
     } catch (error) {
-      if (error instanceof QueryFailedError) {
-        throw new BadRequestException(
-          "You can't delete this category because it has tasks. Please delete or update tasks first.",
-        );
-      }
-      throw new InternalServerErrorException();
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
     }
+    if (todos.length > 0) {
+      throw new BadRequestException(
+        'Category has todos. Please delete todos first.',
+      );
+    }
+    return await this.categoriesService.deleteCategory(id);
   }
 }

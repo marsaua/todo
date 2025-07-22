@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Todo } from '../todo.entity';
 import { Repository } from 'typeorm';
 import { CreateTodoDto } from '../dtos/create-todo.dto';
@@ -18,32 +22,63 @@ export class TodosService {
   ) {}
 
   public async findAll() {
-    const todos = await this.todoRepository.find({
-      relations: ['category'],
-    });
+    let todos: Todo[];
+    try {
+      todos = await this.todoRepository.find({
+        relations: ['category'],
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
     return todos;
   }
 
   public async create(createTodoDto: CreateTodoDto) {
     //find category by id
-    const category = await this.categoriesService.findCategoryById(
-      createTodoDto.categoryId,
-    );
+    let category: Category | null;
+    try {
+      category = await this.categoriesService.findCategoryById(
+        createTodoDto.categoryId,
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
     if (!category) {
-      throw new Error('Category not found');
+      throw new BadRequestException('Category not found');
     }
     const newTodo = this.todoRepository.create({
       ...createTodoDto,
       categoryId: category.id,
     });
-
-    return await this.todoRepository.save(newTodo);
+    try {
+      await this.todoRepository.save(newTodo);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    return newTodo;
   }
 
   public async update(id: number, updateTodoDto: UpdateTodoDto) {
-    const todo = await this.todoRepository.findOneBy({ id });
+    let todo: Todo | null;
+    try {
+      todo = await this.todoRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
     if (!todo) {
-      throw new Error('Todo not found');
+      throw new BadRequestException('Todo not found. Please refresh the page.');
     }
     todo.title = updateTodoDto.title || todo.title;
     todo.content = updateTodoDto.content || todo.content;
@@ -53,17 +88,58 @@ export class TodosService {
         updateTodoDto.categoryId,
       );
       if (!category) {
-        throw new Error('Category not found');
+        throw new BadRequestException('Category not found');
       }
       todo.category = category;
     }
-    return this.todoRepository.save(todo);
-  }
-  public async delete(id: number) {
-    const todo = await this.todoRepository.findOneBy({ id });
-    if (!todo) {
-      throw new Error('Todo not found');
+    try {
+      await this.todoRepository.save(todo);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
     }
-    return this.todoRepository.remove(todo);
+    return todo;
+  }
+
+  public async delete(id: number) {
+    let todo: Todo | null;
+    try {
+      todo = await this.todoRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    if (!todo) {
+      throw new BadRequestException('Todo not found. Please refresh the page.');
+    }
+    try {
+      await this.todoRepository.remove(todo);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    return todo;
+  }
+
+  // find todos by category id
+  public async findTodosByCategoryId(categoryId: number) {
+    let todos: Todo[];
+    try {
+      todos = await this.todoRepository.find({
+        where: { categoryId },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'Something went wrong. Please try again later.',
+      );
+    }
+    return todos;
   }
 }

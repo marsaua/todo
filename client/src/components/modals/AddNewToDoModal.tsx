@@ -14,6 +14,8 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import { useState, useEffect } from "react";
+import { useNotification } from "@/context/NotificationContext";
+
 export default function AddNewToDoModal({
   open,
   handleClose,
@@ -25,17 +27,21 @@ export default function AddNewToDoModal({
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [categories, setCategories] = useState([]);
-  console.log("Payload:", { title, content, categoryId });
+  const { showError } = useNotification();
 
   const handleSubmit = async (): Promise<void> => {
-    await fetch("http://localhost:4000/todos", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, content, categoryId }),
-    });
-    handleClose();
+    try {
+      await fetch("http://localhost:4000/todos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, content, categoryId }),
+      });
+      handleClose();
+    } catch (error: any) {
+      showError(error.message || "Something went wrong");
+    }
   };
 
   useEffect(() => {
