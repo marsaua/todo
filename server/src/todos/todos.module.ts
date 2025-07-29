@@ -5,8 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Todo } from './todo.entity';
 import { Category } from '../categories/category.entity';
 import { CategoriesModule } from '../categories/categories.module';
+import { PaginationModule } from '../common/pagination/pagination.module';
 @Module({
   imports: [
+    PaginationModule,
     TypeOrmModule.forFeature([Todo, Category]),
     forwardRef(() => CategoriesModule),
   ],

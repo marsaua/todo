@@ -1,15 +1,22 @@
-import { IsOptional, IsInt } from 'class-validator';
-import { Type } from 'class-transformer';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDate, IsOptional } from 'class-validator';
+import { IntersectionType } from '@nestjs/swagger';
+import { PaginationQueryDto } from 'src/common/pagination/dtos/pagination-query.dto';
 
-export class GetTodoParamDto {
-  @ApiPropertyOptional({
-    description: 'Todo ID',
-    example: 1234,
-    type: Number,
-  })
+class GetTodosParamDto {
+  @IsDate()
   @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  id?: number;
+  startDate?: Date;
+
+  @IsDate()
+  @IsOptional()
+  endDate?: Date;
+}
+
+export class GetTodosDto extends IntersectionType(
+  GetTodosParamDto,
+  PaginationQueryDto,
+) {
+  constructor(startDate?: Date, endDate?: Date, limit?: number, page?: number) {
+    super(startDate, endDate, limit, page);
+  }
 }

@@ -11,10 +11,13 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Box,
   TextareaAutosize,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
+import { useCreateTodo } from "@/hooks/useTodo";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function AddNewToDoModal({
   open,
@@ -28,17 +31,21 @@ export default function AddNewToDoModal({
   const [content, setContent] = useState("");
   const [categories, setCategories] = useState([]);
   const { showError } = useNotification();
-
-  const handleSubmit = async (): Promise<void> => {
+  const queryClient = useQueryClient();
+  const { mutateAsync: createTodo } = useCreateTodo();
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    event.preventDefault();
     try {
-      await fetch("http://localhost:4000/todos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, content, categoryId }),
-      });
+      await createTodo({ title, content, categoryId });
       handleClose();
+
+      setTitle("");
+      setContent("");
+      setCategoryId("");
+      setCategories([]);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     } catch (error: any) {
       showError(error.message || "Something went wrong");
     }
@@ -64,7 +71,7 @@ export default function AddNewToDoModal({
         <DialogContentText>
           To add new To Do, please enter the title here.
         </DialogContentText>
-        <form onSubmit={handleSubmit}>
+        <Box component="form" onSubmit={(e) => handleSubmit(e)}>
           <TextField
             autoFocus
             required
@@ -90,7 +97,7 @@ export default function AddNewToDoModal({
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
-          <FormControl sx={{ width: "100%", marginTop: "16px" }}>
+          <FormControl sx={{ marginTop: "16px", width: "100%" }}>
             <InputLabel id="demo-simple-select-label">Category</InputLabel>
             <Select
               required
@@ -113,7 +120,7 @@ export default function AddNewToDoModal({
             <Button onClick={handleClose}>Cancel</Button>
             <Button type="submit">Add To Do</Button>
           </DialogActions>
-        </form>
+        </Box>
       </DialogContent>
     </Dialog>
   );

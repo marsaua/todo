@@ -10,6 +10,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateTodoDto } from '../dtos/update-todo.dto';
 import { Category } from 'src/categories/category.entity';
 import { CategoriesService } from 'src/categories/providers/categories.service';
+import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
+import { GetTodosDto } from '../dtos/get-todo-param.dto';
+import { Paginated } from 'src/common/pagination/interfaces/pagination.interface';
 
 @Injectable()
 export class TodosService {
@@ -19,14 +22,17 @@ export class TodosService {
     private readonly categoryRepository: Repository<Category>,
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
+    //Inject pagination provider
+    private readonly paginationProvider: PaginationProvider,
   ) {}
 
-  public async findAll() {
-    let todos: Todo[];
+  public async findAll(postQuery: GetTodosDto): Promise<Paginated<Todo>> {
+    let todos: Paginated<Todo>;
     try {
-      todos = await this.todoRepository.find({
-        relations: ['category'],
-      });
+      todos = await this.paginationProvider.paginateQuery(
+        postQuery,
+        this.todoRepository,
+      );
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -36,7 +42,7 @@ export class TodosService {
     return todos;
   }
 
-  public async create(createTodoDto: CreateTodoDto) {
+  public async createTodo(createTodoDto: CreateTodoDto) {
     //find category by id
     let category: Category | null;
     try {
@@ -67,7 +73,7 @@ export class TodosService {
     return newTodo;
   }
 
-  public async update(id: number, updateTodoDto: UpdateTodoDto) {
+  public async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
     let todo: Todo | null;
     try {
       todo = await this.todoRepository.findOneBy({ id });
@@ -103,7 +109,7 @@ export class TodosService {
     return todo;
   }
 
-  public async delete(id: number) {
+  public async deleteTodo(id: number) {
     let todo: Todo | null;
     try {
       todo = await this.todoRepository.findOneBy({ id });
