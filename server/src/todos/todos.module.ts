@@ -6,11 +6,13 @@ import { Todo } from './todo.entity';
 import { Category } from '../categories/category.entity';
 import { CategoriesModule } from '../categories/categories.module';
 import { PaginationModule } from '../common/pagination/pagination.module';
+import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     PaginationModule,
     TypeOrmModule.forFeature([Todo, Category]),
     forwardRef(() => CategoriesModule),
+    forwardRef(() => UsersModule),
   ],
   controllers: [TodosController],
   providers: [TodosService],

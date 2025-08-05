@@ -1,5 +1,6 @@
 import AuthorizationForm from "@/components/forms/AuthorizationForm";
 import { Box, Typography } from "@mui/material";
+import GoogleAuthButton from "@/components/buttons/GoogleAuthButton";
 
 export default function AuthorizationPage() {
   return (
@@ -14,6 +15,7 @@ export default function AuthorizationPage() {
     >
       <Typography variant="h1"> Authorization </Typography>
       <AuthorizationForm />
+      <GoogleAuthButton />
     </Box>
   );
 }

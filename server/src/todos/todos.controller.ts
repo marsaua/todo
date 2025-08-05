@@ -15,6 +15,9 @@ import { CategoriesService } from '../categories/providers/categories.service';
 import { ConfigService } from '@nestjs/config';
 import { GetTodosDto } from './dtos/get-todo-param.dto';
 import { Paginated } from 'src/common/pagination/interfaces/pagination.interface';
+import { UserNext } from 'src/users/user.entity';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { ActiveUserType } from 'src/auth/enums/active-user-type';
 
 interface Todo {
   id: number;
@@ -34,24 +37,29 @@ export class TodosController {
   ) {}
 
   @Get()
-  public getAllTodos(@Query() query: GetTodosDto): Promise<Paginated<Todo>> {
+  public async getAllTodos(
+    @Query() query: GetTodosDto,
+  ): Promise<Paginated<Todo>> {
     return this.todosService.findAll(query);
   }
 
   @Post()
-  public createTodo(@Body() createTodoDto: CreateTodoDto) {
-    return this.todosService.createTodo(createTodoDto);
+  public async createTodo(
+    @ActiveUser() user: ActiveUserType,
+    @Body() createTodoDto: CreateTodoDto,
+  ): Promise<Todo> {
+    return this.todosService.createTodo(createTodoDto, user);
   }
 
   @Put(':id')
-  public updateTodo(
+  public async updateTodo(
     @Param('id') id: number,
     @Body() updateTodoDto: UpdateTodoDto,
   ) {
     return this.todosService.updateTodo(+id, updateTodoDto);
   }
   @Delete(':id')
-  public deleteTodo(@Param('id') id: number) {
+  public async deleteTodo(@Param('id') id: number) {
     return this.todosService.deleteTodo(+id);
   }
 }

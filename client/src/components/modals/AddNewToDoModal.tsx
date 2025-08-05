@@ -18,6 +18,7 @@ import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useCreateTodo } from "@/hooks/useTodo";
 import { useQueryClient } from "@tanstack/react-query";
+import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export default function AddNewToDoModal({
   open,
@@ -29,7 +30,7 @@ export default function AddNewToDoModal({
   const [categoryId, setCategoryId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState<any>([]);
   const { showError } = useNotification();
   const queryClient = useQueryClient();
   const { mutateAsync: createTodo } = useCreateTodo();
@@ -54,9 +55,11 @@ export default function AddNewToDoModal({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:4000/categories");
-        const data = await res.json();
-        setCategories(data);
+        const res = await fetchWithAuth(
+          "GET",
+          "http://localhost:4000/categories"
+        );
+        setCategories(res.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }

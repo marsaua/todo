@@ -1,12 +1,13 @@
 import {
   Column,
   Entity,
-  ManyToOne,
   PrimaryGeneratedColumn,
   JoinColumn,
   CreateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Category } from 'src/categories/category.entity';
+import { UserNext } from 'src/users/user.entity';
 
 @Entity()
 export class Todo {
@@ -36,9 +37,13 @@ export class Todo {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Category, (category) => category, {
-    eager: true,
-  })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
+
+  @ManyToOne(() => UserNext, (user) => user.todos, {
+    eager: true,
+    nullable: false,
+  })
+  @JoinColumn({ name: 'authorId' })
+  author: UserNext;
 }

@@ -5,6 +5,26 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
+  @ApiProperty({
+    example: 'name',
+    description: 'Name',
+    required: true,
+  })
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  @ApiProperty({
+    example: 'surname',
+    description: 'Surname',
+    required: true,
+  })
+  surname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
   @IsEmail()
   @ApiProperty({
     example: 'email@gmail.com',

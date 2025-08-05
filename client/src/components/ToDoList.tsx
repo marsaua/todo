@@ -2,6 +2,7 @@ import { Box } from "@mui/material";
 import ToDoItem from "./ToDoItem";
 import AddTodoItem from "./AddTodoItem";
 import Pagination from "./Pagination"; // ← окремий компонент пагінації, якщо є
+import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export default async function ToDoList({
   page,
@@ -10,17 +11,17 @@ export default async function ToDoList({
   page: number;
   limit: number;
 }) {
-  const categories = await fetch(`http://localhost:4000/categories`).then(
-    (res) => res.json()
+  const categories = await fetchWithAuth(
+    "GET",
+    "http://localhost:4000/categories"
   );
+  console.log(categories);
 
-  const todosRes = await fetch(
-    `http://localhost:4000/todos?page=${page}&limit=${limit}`,
-    { cache: "no-store" } // або "force-cache" — залежить від потреб
+  const todos = await fetchWithAuth(
+    "GET",
+    `http://localhost:4000/todos?page=${page}&limit=${limit}`
   );
-  const todosData = await todosRes.json();
-  const todos = todosData.data;
-
+  console.log(todos.data);
   return (
     <Box>
       <Box
@@ -31,15 +32,15 @@ export default async function ToDoList({
         }}
       >
         {todos &&
-          todos.map((card: any) => (
-            <ToDoItem key={card.id} card={card} categories={categories} />
+          todos.data.data.map((card: any) => (
+            <ToDoItem key={card.id} card={card} categories={categories.data} />
           ))}
         <AddTodoItem />
       </Box>
       <Pagination
         page={page}
         limit={limit}
-        totalPages={todosData.meta.totalPages}
+        totalPages={todos.meta?.totalPages}
       />
     </Box>
   );

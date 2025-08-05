@@ -5,6 +5,18 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(255)
+  @ApiProperty({ example: 'name' })
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  @ApiProperty({ example: 'surname' })
+  surname: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
   @IsEmail()
   @ApiProperty({ example: 'username1@gmail.com' })
   email: string;

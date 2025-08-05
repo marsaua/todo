@@ -1,8 +1,20 @@
 import ToDoList from "@/components/ToDoList";
 
-export default function HomePage({ searchParams }: { searchParams: any }) {
-  const page = parseInt(searchParams.page) || 1;
-  const limit = parseInt(searchParams.limit) || 5;
+type Props = {
+  searchParams?: {
+    page?: string;
+    limit?: string;
+  };
+};
 
-  return <ToDoList page={page} limit={limit} />;
+export default async function HomePage({ searchParams }: Props) {
+  const { page, limit } = await searchParams;
+  const pageInt = Number(page ?? "1");
+  const limitInt = Number(limit ?? "5");
+  console.log(pageInt);
+  console.log(limitInt);
+  // const page = parseInt(searchParams?.page || "1");
+  // const limit = parseInt(searchParams?.limit || "5");
+
+  return <ToDoList page={pageInt} limit={limitInt} />;
 }

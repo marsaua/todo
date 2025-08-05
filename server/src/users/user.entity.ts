@@ -3,12 +3,27 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Todo } from 'src/todos/todo.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class UserNext {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({
+    nullable: false,
+    length: 255,
+  })
+  name: string;
+
+  @Column({
+    nullable: false,
+    length: 255,
+  })
+  surname: string;
 
   @Column({
     unique: true,
@@ -18,11 +33,23 @@ export class UserNext {
   email: string;
 
   @Column({
-    nullable: false,
+    type: 'varchar',
+    nullable: true,
     length: 255,
   })
-  password: string;
+  @Exclude()
+  password?: string;
+
+  @Column({
+    type: 'varchar',
+    nullable: true,
+  })
+  @Exclude()
+  googleId?: string;
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @OneToMany(() => Todo, (todo) => todo.author)
+  todos: Todo[];
 }

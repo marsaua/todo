@@ -13,6 +13,11 @@ import { CategoriesService } from 'src/categories/providers/categories.service';
 import { PaginationProvider } from 'src/common/pagination/providers/pagination.provider';
 import { GetTodosDto } from '../dtos/get-todo-param.dto';
 import { Paginated } from 'src/common/pagination/interfaces/pagination.interface';
+import { UserNext } from 'src/users/user.entity';
+import { UsersService } from 'src/users/providers/users.service';
+import { Inject } from '@nestjs/common';
+import { forwardRef } from '@nestjs/common';
+import { ActiveUserType } from 'src/auth/enums/active-user-type';
 
 @Injectable()
 export class TodosService {
@@ -24,6 +29,8 @@ export class TodosService {
     private readonly todoRepository: Repository<Todo>,
     //Inject pagination provider
     private readonly paginationProvider: PaginationProvider,
+    @Inject(forwardRef(() => UsersService))
+    private readonly userService: UsersService,
   ) {}
 
   public async findAll(postQuery: GetTodosDto): Promise<Paginated<Todo>> {
@@ -42,7 +49,13 @@ export class TodosService {
     return todos;
   }
 
-  public async createTodo(createTodoDto: CreateTodoDto) {
+  public async createTodo(createTodoDto: CreateTodoDto, user: ActiveUserType) {
+    const author: UserNext | null = await this.userService.findOneById(
+      user.sub,
+    );
+    if (!author) {
+      throw new BadRequestException('User not found');
+    }
     //find category by id
     let category: Category | null;
     try {
@@ -61,6 +74,7 @@ export class TodosService {
     const newTodo = this.todoRepository.create({
       ...createTodoDto,
       categoryId: category.id,
+      author: author,
     });
     try {
       await this.todoRepository.save(newTodo);

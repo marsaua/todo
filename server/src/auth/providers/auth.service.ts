@@ -7,9 +7,9 @@ import {
 import { UsersService } from '../../users/providers/users.service';
 import { UserNext } from '../../users/user.entity';
 import { HashingProvider } from '../../auth/providers/hashing.provider';
-import { JwtService } from '@nestjs/jwt';
-import jwtConfig from '../../auth/config/jwt.config';
-import { ConfigService, ConfigType } from '@nestjs/config';
+import { GenerateTokensProvider } from './generate-tokens.provider';
+import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
+import { RefreshTokensProvider } from './refresh-tokens.provider';
 
 @Injectable()
 export class AuthService {
@@ -20,18 +20,15 @@ export class AuthService {
     @Inject(forwardRef(() => HashingProvider))
     private readonly hashingProvider: HashingProvider,
 
-    @Inject(jwtConfig.KEY)
-    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly generateTokensProvider: GenerateTokensProvider,
 
-    private readonly jwtService: JwtService, // не потрібно forwardRef
-
-    private readonly configService: ConfigService, // не потрібно forwardRef
+    private readonly refreshTokensProvider: RefreshTokensProvider,
   ) {}
 
   async autherizeUser(
     email: string,
     password: string,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.usersService.findOneUserByEmail(email);
     if (!user) {
       throw new BadRequestException('User not found');
@@ -39,29 +36,34 @@ export class AuthService {
 
     const isPasswordMatched = await this.hashingProvider.comparePassword(
       password,
-      user.password,
+      user.password!,
     );
     if (!isPasswordMatched) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const token = await this.jwtService.signAsync(
-      {
-        sub: user.id,
-        email: user.email,
-      },
-      {
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-        expiresIn: this.jwtConfiguration.accessTokenTtl,
-        secret: this.jwtConfiguration.secret,
-      },
-    );
-
-    return { accessToken: token };
+    const tokens = await this.generateTokensProvider.generateTokens(user);
+    return tokens;
   }
 
-  async registerUser(email: string, password: string): Promise<UserNext> {
-    return this.usersService.createUser({ email, password });
+  async registerUser(
+    name: string,
+    surname: string,
+    email: string,
+    password: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const user = await this.usersService.createUser({
+      name,
+      surname,
+      email,
+      password,
+    });
+
+    const tokens = await this.generateTokensProvider.generateTokens(user);
+    return tokens;
+  }
+
+  public async refreshTokens(refreshToken: string) {
+    return this.refreshTokensProvider.refreshTokens(refreshToken);
   }
 }

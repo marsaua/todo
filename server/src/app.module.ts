@@ -18,6 +18,11 @@ import { UsersModule } from './users/users.module';
 import { UserNext } from './users/user.entity';
 import { AuthService } from './auth/providers/auth.service';
 import { AuthModule } from './auth/auth.module';
+import { AccessTokenGuard } from './auth/guards/access-token.guard';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationGuard } from './auth/guards/authentification.guard';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { DataResponceInterceptor } from './common/interceptors/data-responce/data-responce.interceptor';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -50,6 +55,19 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PaginationProvider, AuthService],
+  providers: [
+    AppService,
+    PaginationProvider,
+    AuthService,
+    AccessTokenGuard,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataResponceInterceptor,
+    },
+  ],
 })
 export class AppModule {}

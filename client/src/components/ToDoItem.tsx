@@ -25,7 +25,7 @@ export default function ToDoItem({
       <CardContent>
         <Typography variant="h4">{card.title}</Typography>
         <Typography variant="body1">{card.content}</Typography>
-        <Typography variant="body1">{card.category.title}</Typography>
+        <Typography variant="body1">{card.title}</Typography>
       </CardContent>
       <Box
         sx={{
@@ -35,7 +35,7 @@ export default function ToDoItem({
           marginBottom: 2,
         }}
       >
-        <UpdateTodoButton card={card} categories={categories} />
+        {/* <UpdateTodoButton card={card} categories={categories} /> */}
         <DeleteTodoButton card={card} />
       </Box>
     </Card>

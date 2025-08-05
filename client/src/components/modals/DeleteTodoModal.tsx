@@ -9,6 +9,7 @@ import {
 import { Button } from "@mui/material";
 import getQueryClient from "@/lib/getQueryClient";
 import { useNotification } from "@/context/NotificationContext";
+import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export default function DeleteTodoModal({
   open,
@@ -23,14 +24,12 @@ export default function DeleteTodoModal({
   const { showError } = useNotification();
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/todos/${card.id}`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      if (!res.ok) {
-        const data = await res.json();
+      const res = await fetchWithAuth(
+        "DELETE",
+        `http://localhost:4000/todos/${card.id}`
+      );
+      if (!res) {
+        const data = await res;
         throw new Error(data.message || "Failed to delete todo");
       }
       queryClient.invalidateQueries({ queryKey: ["todos"] });

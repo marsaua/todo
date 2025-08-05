@@ -2,12 +2,14 @@ import {
   Controller,
   InternalServerErrorException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CategoriesService } from './providers/categories.service';
-import { Get, Param, Post, Body, Delete } from '@nestjs/common';
+import { Get, Param, Post, Body, Delete, Req } from '@nestjs/common';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { Todo } from 'src/todos/todo.entity';
 import { TodosService } from 'src/todos/providers/todos.service';
+import { Request } from 'express';
 
 @Controller('categories')
 export class CategoriesController {
@@ -20,7 +22,11 @@ export class CategoriesController {
     return await this.categoriesService.findAll();
   }
   @Get(':id')
-  public async getCategoryById(@Param('id') id: number) {
+  public async getCategoryById(@Param('id') id: number, @Req() req: Request) {
+    const accessToken = req.cookies?.accessToken;
+    if (!accessToken) {
+      throw new UnauthorizedException('Access token not found in cookies');
+    }
     return await this.categoriesService.findCategoryById(id);
   }
   @Post()

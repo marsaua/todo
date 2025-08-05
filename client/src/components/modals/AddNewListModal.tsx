@@ -8,7 +8,8 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import getRandomColor from "@/halpers/randomColor";
+import getRandomColor from "@/helpers/randomColor";
+import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export default function AddNewListModal({
   open,
@@ -24,13 +25,8 @@ export default function AddNewListModal({
   const color = getRandomColor();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    fetch("http://localhost:4000/categories", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ title, color }),
-    });
+    event.preventDefault();
+    fetchWithAuth("POST", "http://localhost:4000/categories", { title, color });
     handleClose();
   };
 
