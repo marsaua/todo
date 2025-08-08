@@ -29,7 +29,7 @@ export default function DeleteTodoModal({
         `http://localhost:4000/todos/${card.id}`
       );
       if (!res) {
-        const data = await res;
+        const data: any = await res;
         throw new Error(data.message || "Failed to delete todo");
       }
       queryClient.invalidateQueries({ queryKey: ["todos"] });

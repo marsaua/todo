@@ -16,10 +16,13 @@ import {
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
-import { useCreateTodo } from "@/hooks/useTodo";
 import { useQueryClient } from "@tanstack/react-query";
 import { fetchWithAuth } from "@/helpers/fetchWithAuth";
-
+type Category = {
+  id: number;
+  title: string;
+  color: string;
+};
 export default function AddNewToDoModal({
   open,
   handleClose,
@@ -30,7 +33,7 @@ export default function AddNewToDoModal({
   const [categoryId, setCategoryId] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [categories, setCategories] = useState<any>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const { showError } = useNotification();
   const queryClient = useQueryClient();
 
@@ -63,7 +66,7 @@ export default function AddNewToDoModal({
           "GET",
           "http://localhost:4000/categories"
         );
-        setCategories(res.data);
+        setCategories(res as Category[]);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
@@ -116,7 +119,7 @@ export default function AddNewToDoModal({
               onChange={(e) => setCategoryId(e.target.value)}
             >
               {categories.length > 0 &&
-                categories.map((category: any) => (
+                categories.map((category: Category) => (
                   <MenuItem key={category.id} value={category.id}>
                     {category.title}
                   </MenuItem>
