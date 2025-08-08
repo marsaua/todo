@@ -1,15 +1,13 @@
 import ToDoList from "@/components/ToDoList";
 
-type PageProps = {
-  searchParams: {
-    page?: string;
-    limit?: string;
-  };
-};
-
-export default function HomePage({ searchParams }: PageProps) {
-  const pageInt = Number(searchParams.page ?? "1");
-  const limitInt = Number(searchParams.limit ?? "5");
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string; limit?: string }>;
+}) {
+  const params = await searchParams;
+  const pageInt = Number(params.page ?? "1");
+  const limitInt = Number(params.limit ?? "5");
 
   return <ToDoList page={pageInt} limit={limitInt} />;
 }
