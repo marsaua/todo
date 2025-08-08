@@ -3,7 +3,14 @@ import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export const fetchTodos = async (page: number = 1, limit: number = 10) => {
   const res = await fetch(
-    `http://localhost:4000/todos?page=${page}&limit=${limit}`
+    `http://localhost:4000/todos?page=${page}&limit=${limit}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    }
   );
   if (!res.ok) throw new Error("Failed to fetch");
   return res.json();

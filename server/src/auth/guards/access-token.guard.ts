@@ -10,11 +10,7 @@ import { ConfigType } from '@nestjs/config';
 import jwtConfig from 'src/auth/config/jwt.config';
 import { Request } from 'express';
 import { REQUEST_USER_KEY } from '../constants/auth.constants';
-import { Request as ExpressRequest } from 'express';
 
-interface RequestWithCookies extends ExpressRequest {
-  cookies: Record<string, string>;
-}
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
@@ -22,35 +18,39 @@ export class AccessTokenGuard implements CanActivate {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    //Extract the request object from the execution context
-    const request = context.switchToHttp().getRequest();
-    //Extract the token from the request header
-    const token = this.extractRequestFromHeader(request);
-    //Verify the token
+    const request = context.switchToHttp().getRequest<Request>();
+
+    const token = this.extractAccessToken(request);
+
     if (!token) {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Access token is missing');
     }
+
     try {
       const payload = await this.jwtService.verifyAsync(
         token,
         this.jwtConfiguration,
       );
+
       request[REQUEST_USER_KEY] = payload;
-      console.log(payload);
-    } catch {
-      throw new UnauthorizedException();
+      return true;
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired access token');
     }
-    return true;
   }
-  private extractRequestFromHeader(
-    request: RequestWithCookies,
-  ): string | undefined {
+
+  /**
+   * Tries to extract token from Authorization header or cookies
+   */
+  private extractAccessToken(request: Request): string | undefined {
     const authHeader = request.headers['authorization'];
     if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
       return authHeader.split(' ')[1];
     }
-    console.log(request.cookies);
+    console.log('Cookies:', request.cookies);
+    console.log('Access Token:', request.cookies?.accessToken);
     return request.cookies?.accessToken;
   }
 }

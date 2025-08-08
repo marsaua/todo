@@ -28,28 +28,27 @@ export class AuthController {
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ tokens: { accessToken: string; refreshToken: string } }> {
     const tokens = await this.authService.autherizeUser(
       loginDto.email,
       loginDto.password,
     );
 
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 60 * 60 * 1000,
-    });
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 1000,
+      maxAge: 15 * 60 * 1000, // 15 minutes
     });
-
-    return { accessToken: tokens.accessToken };
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return { tokens };
   }
 
   @Post('register')
@@ -58,29 +57,28 @@ export class AuthController {
   async register(
     @Body() registerDto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<{ tokens: { accessToken: string; refreshToken: string } }> {
     const tokens = await this.authService.registerUser(
       registerDto.name,
       registerDto.surname,
       registerDto.email,
       registerDto.password,
     );
-
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'strict',
+      sameSite: 'lax',
       path: '/',
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 15 * 60 * 1000, // 15 minutes
     });
-    return { accessToken: tokens.accessToken };
+    res.cookie('refreshToken', tokens.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+    return { tokens };
   }
 
   @Post('refresh-tokens')
@@ -89,31 +87,24 @@ export class AuthController {
   public async refreshTokens(
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
-  ) {
-    const refreshToken = req.cookies?.refreshToken as string;
-
-    if (!refreshToken) {
-      throw new UnauthorizedException('Refresh token not found in cookies');
-    }
-
+  ): Promise<{ tokens: { accessToken: string; refreshToken: string } }> {
+    const refreshToken = req.cookies?.refreshToken;
     const tokens = await this.authService.refreshTokens(refreshToken);
+
+    res.cookie('accessToken', tokens.accessToken, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+      maxAge: 15 * 60 * 1000,
+    });
 
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
+      sameSite: 'lax',
       secure: true,
-      sameSite: 'strict',
-      path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 24 * 60 * 60 * 1000,
-    });
-
-    return { accessToken: tokens.accessToken }; // віддаємо access токен для збереження на клієнті
+    return { tokens };
   }
 
   @Get('is-authorized')

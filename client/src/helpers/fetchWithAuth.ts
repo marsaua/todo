@@ -1,29 +1,22 @@
-"use server";
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
+"use client";
 
 export async function fetchWithAuth<T>(
   method: string,
   url: string,
   body?: any
 ): Promise<T> {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get("accessToken")?.value;
-
-  const makeRequest = async (token?: string) => {
-    const options: RequestInit = {
+  const makeRequest = async (): Promise<Response> => {
+    return await fetch(url, {
       method,
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
       credentials: "include",
       ...(body && { body: JSON.stringify(body) }),
-    };
-    return await fetch(url, options);
+    });
   };
 
-  let res = await makeRequest(accessToken);
+  let res = await makeRequest();
 
   if (res.status === 401) {
     const refreshRes = await fetch(
@@ -35,23 +28,15 @@ export async function fetchWithAuth<T>(
     );
 
     if (!refreshRes.ok) {
-      redirect("/authorization");
-      throw new Error("Unauthorized, and refresh failed");
+      throw new Error("Unauthorized");
     }
 
-    const { accessToken: newAccessToken } = await refreshRes.json();
-
-    res = await makeRequest(newAccessToken);
-    if (!res.ok) {
-      throw new Error(`Retry failed: ${res.status}`);
-    }
-
-    return await res.json();
+    res = await makeRequest();
   }
 
   if (!res.ok) {
     throw new Error(`Request failed: ${res.status}`);
   }
 
-  return await res.json();
+  return res.json();
 }

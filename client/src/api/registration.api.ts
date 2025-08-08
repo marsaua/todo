@@ -20,5 +20,5 @@ export async function register(formData: FormData) {
     throw new Error(data.message || "Registration failed");
   }
 
-  redirect("/home");
+  // redirect("/home");
 }

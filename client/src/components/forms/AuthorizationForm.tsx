@@ -1,13 +1,42 @@
 "use client";
 
-import { login } from "@/api/authorization.api";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export default function AuthorizationForm() {
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    if (typeof email !== "string" || typeof password !== "string") {
+      alert("Invalid form data");
+      return;
+    }
+
+    const res = await fetch("http://localhost:4000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.message || "Login failed");
+      return;
+    }
+
+    router.push("/home");
+  };
+
   return (
     <Box
       component="form"
-      action={login}
+      onSubmit={handleSubmit}
       sx={{
         display: "flex",
         flexDirection: "column",

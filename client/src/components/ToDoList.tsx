@@ -1,27 +1,56 @@
+"use client";
 import { Box } from "@mui/material";
 import ToDoItem from "./ToDoItem";
 import AddTodoItem from "./AddTodoItem";
 import Pagination from "./Pagination"; // ← окремий компонент пагінації, якщо є
 import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useState } from "react";
+import { useEffect } from "react";
 
-export default async function ToDoList({
+export default function ToDoList({
   page,
   limit,
 }: {
   page: number;
   limit: number;
 }) {
-  const categories = await fetchWithAuth(
-    "GET",
-    "http://localhost:4000/categories"
-  );
-  console.log(categories);
+  const [categories, setCategories] = useState<any>([]);
+  const [todos, setTodos] = useState<any>([]);
 
-  const todos = await fetchWithAuth(
-    "GET",
-    `http://localhost:4000/todos?page=${page}&limit=${limit}`
-  );
-  console.log(todos.data);
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchWithAuth(
+          "GET",
+          "http://localhost:4000/categories"
+        );
+        setCategories(data);
+      } catch (err) {
+        console.error("Unauthorized, redirecting to /authorization", err);
+      }
+    };
+
+    load();
+  }, []);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await fetchWithAuth(
+          "GET",
+          `http://localhost:4000/todos?page=${page}&limit=${limit}`
+        );
+        setTodos(data);
+      } catch (err) {
+        console.error("Unauthorized, redirecting to /authorization", err);
+      }
+    };
+
+    load();
+  }, []);
+
+  console.log(todos);
+
   return (
     <Box>
       <Box
@@ -31,7 +60,7 @@ export default async function ToDoList({
           gap: 4,
         }}
       >
-        {todos &&
+        {todos.data &&
           todos.data.data.map((card: any) => (
             <ToDoItem key={card.id} card={card} categories={categories.data} />
           ))}

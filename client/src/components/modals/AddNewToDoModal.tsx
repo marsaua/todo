@@ -33,15 +33,19 @@ export default function AddNewToDoModal({
   const [categories, setCategories] = useState<any>([]);
   const { showError } = useNotification();
   const queryClient = useQueryClient();
-  const { mutateAsync: createTodo } = useCreateTodo();
+
   const handleSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault();
     try {
-      await createTodo({ title, content, categoryId });
+      const res = await fetchWithAuth("POST", "http://localhost:4000/todos", {
+        title,
+        content,
+        categoryId,
+      });
+      console.log(res);
       handleClose();
-
       setTitle("");
       setContent("");
       setCategoryId("");
