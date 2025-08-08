@@ -43,6 +43,8 @@ const ENV = process.env.NODE_ENV;
         type: 'postgres',
         entities: [Todo, Category, UserNext],
         synchronize: true,
+        url: configService.get<string>('DATABASE_URL'),
+        autoLoadEntities: true,
         host: configService.get('database.host'),
         port: configService.get('database.port'),
         username: configService.get('database.username'),
