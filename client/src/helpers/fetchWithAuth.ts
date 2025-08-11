@@ -7,7 +7,7 @@ export async function fetchWithAuth<T>(
 ): Promise<T> {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const makeRequest = async (): Promise<Response> => {
-    return await fetch(`http://${API_URL}/${url}`, {
+    return await fetch(`${API_URL}/${url}`, {
       method,
       headers: {
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export async function fetchWithAuth<T>(
   let res = await makeRequest();
 
   if (res.status === 401) {
-    const refreshRes = await fetch(`http://${API_URL}/auth/refresh-tokens`, {
+    const refreshRes = await fetch(`${API_URL}/auth/refresh-tokens`, {
       method: "POST",
       credentials: "include",
     });

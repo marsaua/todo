@@ -6,7 +6,7 @@ export default function GoogleAuthButton() {
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const handleSuccess = async (response: CredentialResponse) => {
     try {
-      const res = await fetch(`http://${API_URL}/auth/google-authentication`, {
+      const res = await fetch(`${API_URL}/auth/google-authentication`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

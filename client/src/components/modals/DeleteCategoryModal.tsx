@@ -21,7 +21,7 @@ export default function DeleteCategoryModal({
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const handleSubmit = async (id: number) => {
     try {
-      const res = await fetch(`http://${API_URL}/categories/${id}`, {
+      const res = await fetch(`${API_URL}/categories/${id}`, {
         method: "DELETE",
       });
 

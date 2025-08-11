@@ -9,7 +9,7 @@ export async function register(formData: FormData) {
   };
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`http://${API_URL}/auth/register`, {
+  const res = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
