@@ -28,7 +28,7 @@ export default function ProtectedLayout({
           "GET",
           "categories"
         );
-        if (data.data) {
+        if (data) {
           setCategoriesResponse(data);
         }
       } catch (err) {
@@ -39,6 +39,7 @@ export default function ProtectedLayout({
 
     load();
   }, [router]);
+  console.log(categoriesResponse);
 
   return (
     <AsideMenu categories={categoriesResponse?.data.data || []}>
