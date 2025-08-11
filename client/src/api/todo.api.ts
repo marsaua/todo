@@ -2,7 +2,7 @@
 import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export const fetchTodos = async (page: number = 1, limit: number = 10) => {
-  const res = await fetch(`/todos?page=${page}&limit=${limit}`, {
+  const res = await fetch(`todos?page=${page}&limit=${limit}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -18,7 +18,7 @@ export const createTodo = async (todo: {
   categoryId: string;
 }) => {
   try {
-    const data = await fetchWithAuth("POST", "/todos", todo);
+    const data = await fetchWithAuth("POST", "todos", todo);
     return data;
   } catch (error) {
     console.error("❌ Error creating todo:", error);

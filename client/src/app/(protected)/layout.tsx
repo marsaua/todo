@@ -20,7 +20,7 @@ export default function ProtectedLayout({
   useEffect(() => {
     const load = async () => {
       try {
-        const data: Category[] = await fetchWithAuth("GET", "/categories");
+        const data: Category[] = await fetchWithAuth("GET", "categories");
         if (data) {
           setCategoriesResponse({ data });
         }

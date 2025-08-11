@@ -42,7 +42,7 @@ export default function AddNewToDoModal({
   ): Promise<void> => {
     event.preventDefault();
     try {
-      const res = await fetchWithAuth("POST", "/todos", {
+      const res = await fetchWithAuth("POST", "todos", {
         title,
         content,
         categoryId,
@@ -62,7 +62,7 @@ export default function AddNewToDoModal({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetchWithAuth("GET", "/categories");
+        const res = await fetchWithAuth("GET", "categories");
         setCategories(res as Category[]);
       } catch (error) {
         console.error("Failed to fetch categories:", error);

@@ -19,7 +19,7 @@ export default function ToDoList({
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await fetchWithAuth("GET", "/categories");
+        const data = await fetchWithAuth("GET", "categories");
         setCategories(data);
       } catch (err) {
         console.error("Unauthorized, redirecting to /authorization", err);
@@ -34,7 +34,7 @@ export default function ToDoList({
       try {
         const data = await fetchWithAuth(
           "GET",
-          `/todos?page=${page}&limit=${limit}`
+          `todos?page=${page}&limit=${limit}`
         );
         setTodos(data);
       } catch (err) {
