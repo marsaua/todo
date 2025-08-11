@@ -8,6 +8,7 @@ export async function register(formData: FormData) {
     password: formData.get("password"),
   };
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  console.log(API_URL);
 
   const res = await fetch(`http://${API_URL}/auth/register`, {
     method: "POST",

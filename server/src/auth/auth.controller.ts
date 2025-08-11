@@ -37,14 +37,14 @@ export class AuthController {
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: `${process.env.NODE_ENV === 'development' ? 'lax' : 'none'}`,
       path: '/',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: `${process.env.NODE_ENV === 'development' ? 'lax' : 'none'}`,
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -67,14 +67,14 @@ export class AuthController {
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: `${process.env.NODE_ENV === 'development' ? 'lax' : 'none'}`,
       path: '/',
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: `${process.env.NODE_ENV === 'development' ? 'lax' : 'none'}`,
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -93,14 +93,14 @@ export class AuthController {
 
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: `${process.env.NODE_ENV === 'development' ? 'lax' : 'none'}`,
       secure: true,
       maxAge: 15 * 60 * 1000,
     });
 
     res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: `${process.env.NODE_ENV === 'development' ? 'lax' : 'none'}`,
       secure: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
