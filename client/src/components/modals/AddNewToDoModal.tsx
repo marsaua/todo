@@ -18,11 +18,13 @@ import { useState, useEffect } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+
 type Category = {
   id: number;
   title: string;
   color: string;
 };
+
 export default function AddNewToDoModal({
   open,
   handleClose,
@@ -30,24 +32,21 @@ export default function AddNewToDoModal({
   open: boolean;
   handleClose: () => void;
 }) {
-  const [categoryId, setCategoryId] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [categoryId, setCategoryId] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [categories, setCategories] = useState<Category[]>([]);
   const { showError } = useNotification();
   const queryClient = useQueryClient();
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ): Promise<void> => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      const res = await fetchWithAuth("POST", "todos", {
+      await fetchWithAuth("POST", "todos", {
         title,
         content,
-        categoryId,
+        categoryId: Number(categoryId),
       });
-      console.log(res);
       handleClose();
       setTitle("");
       setContent("");
@@ -62,8 +61,11 @@ export default function AddNewToDoModal({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetchWithAuth("GET", "categories");
-        setCategories(res as Category[]);
+        const res = await fetchWithAuth<{ data: Category[] }>(
+          "GET",
+          "categories"
+        );
+        setCategories(res.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);
       }
@@ -71,6 +73,7 @@ export default function AddNewToDoModal({
 
     fetchCategories();
   }, []);
+
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
       <DialogTitle>Add New To Do</DialogTitle>
@@ -78,7 +81,7 @@ export default function AddNewToDoModal({
         <DialogContentText>
           To add new To Do, please enter the title here.
         </DialogContentText>
-        <Box component="form" onSubmit={(e) => handleSubmit(e)}>
+        <Box component="form" onSubmit={handleSubmit}>
           <TextField
             autoFocus
             required
@@ -93,7 +96,6 @@ export default function AddNewToDoModal({
             onChange={(e) => setTitle(e.target.value)}
           />
           <TextareaAutosize
-            autoFocus
             required
             id="content"
             name="content"
@@ -105,22 +107,21 @@ export default function AddNewToDoModal({
             onChange={(e) => setContent(e.target.value)}
           />
           <FormControl sx={{ marginTop: "16px", width: "100%" }}>
-            <InputLabel id="demo-simple-select-label">Category</InputLabel>
+            <InputLabel id="category-label">Category</InputLabel>
             <Select
               required
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
+              labelId="category-label"
+              id="category-select"
               value={categoryId}
               name="category"
               label="Category"
               onChange={(e) => setCategoryId(e.target.value)}
             >
-              {categories.length > 0 &&
-                categories.map((category: Category) => (
-                  <MenuItem key={category.id} value={category.id}>
-                    {category.title}
-                  </MenuItem>
-                ))}
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.title}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <DialogActions>

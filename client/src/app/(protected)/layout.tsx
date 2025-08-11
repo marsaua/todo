@@ -37,7 +37,6 @@ export default function ProtectedLayout({
 
     load();
   }, [router]);
-  console.log(categoriesResponse);
 
   return (
     <AsideMenu categories={categoriesResponse?.data || []}>

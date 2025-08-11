@@ -42,7 +42,6 @@ export default function AsideMenu({
     setOpenDelete(false);
     setId(0);
   };
-  console.log(categories);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };

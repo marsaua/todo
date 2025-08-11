@@ -7,6 +7,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNotification } from "@/context/NotificationContext";
+import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export default function DeleteCategoryModal({
   open,
@@ -18,18 +19,14 @@ export default function DeleteCategoryModal({
   id: number;
 }) {
   const { showSuccess, showError } = useNotification();
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const handleSubmit = async (id: number) => {
     try {
-      const res = await fetch(`${API_URL}/categories/${id}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
+      const res: any = await fetchWithAuth("DELETE", `categories/${id}`);
 
       if (!res.ok) {
-        showError(data.message || "Failed to delete category");
+        showError(res.message || "Failed to delete category");
       } else {
+        showSuccess("Category deleted successfully. Refresh the page please");
         onClose();
       }
     } catch (error: any) {
