@@ -6,9 +6,7 @@ import { useRouter } from "next/navigation";
 
 type Category = { title: string; color: string; id: number };
 type CategoriesResponse = {
-  data: {
-    data: Category[];
-  };
+  data: Category[];
 };
 
 export default function ProtectedLayout({
@@ -42,7 +40,7 @@ export default function ProtectedLayout({
   console.log(categoriesResponse);
 
   return (
-    <AsideMenu categories={categoriesResponse?.data.data || []}>
+    <AsideMenu categories={categoriesResponse?.data || []}>
       {children}
     </AsideMenu>
   );
