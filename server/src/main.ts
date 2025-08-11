@@ -11,7 +11,12 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(express.json());
   app.enableCors({
-    origin: 'http://localhost:3001',
+    origin: [
+      'http://localhost:3001',
+      'https://todo-ki18.vercel.app',
+      'https://todo-ki18-git-main-marsauas-projects.vercel.app',
+      'https://todo-ki18-2sjbokhzb-marsauas-projects.vercel.app',
+    ],
     credentials: true,
   });
 

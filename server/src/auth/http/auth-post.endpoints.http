@@ -1,7 +1,9 @@
-POST http://localhost:4000/auth/login
+POST   https://todo-production-5c09.up.railway.app/auth/register
 Content-Type: application/json
 
 {
+    "name": "name",
+    "surname": "surname",
     "email": "username4@gmail.com",
     "password": "password"
 }
