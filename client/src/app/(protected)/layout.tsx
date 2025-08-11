@@ -5,24 +5,31 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type Category = { title: string; color: string; id: number };
+type CategoriesResponse = {
+  data: {
+    data: Category[];
+  };
+};
 
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [categoriesResponse, setCategoriesResponse] = useState<{
-    data: Category[];
-  } | null>(null);
+  const [categoriesResponse, setCategoriesResponse] =
+    useState<CategoriesResponse | null>(null);
 
   const router = useRouter();
 
   useEffect(() => {
     const load = async () => {
       try {
-        const data: Category[] = await fetchWithAuth("GET", "categories");
-        if (data) {
-          setCategoriesResponse({ data });
+        const data: CategoriesResponse = await fetchWithAuth(
+          "GET",
+          "categories"
+        );
+        if (data.data) {
+          setCategoriesResponse(data);
         }
       } catch (err) {
         console.error("Unauthorized, redirecting to /authorization", err);
@@ -34,7 +41,7 @@ export default function ProtectedLayout({
   }, [router]);
 
   return (
-    <AsideMenu categories={categoriesResponse?.data || []}>
+    <AsideMenu categories={categoriesResponse?.data.data || []}>
       {children}
     </AsideMenu>
   );

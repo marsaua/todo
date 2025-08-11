@@ -24,13 +24,13 @@ export default function AsideMenu({
   categories,
 }: {
   children: React.ReactNode;
-  categories: {
-    data: {
-      title: string;
-      color: string;
-      id: number;
-    }[];
-  };
+  categories:
+    | {
+        title: string;
+        color: string;
+        id: number;
+      }[]
+    | null;
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -42,7 +42,7 @@ export default function AsideMenu({
     setOpenDelete(false);
     setId(0);
   };
-
+  console.log(categories);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -65,46 +65,45 @@ export default function AsideMenu({
         <ListItem>
           <Link href="/home">All todos</Link>
         </ListItem>
-        {categories?.data &&
-          categories?.data.map((cat) => (
-            <ListItem
-              key={cat.id}
-              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+        {categories?.map((cat) => (
+          <ListItem
+            key={cat.id}
+            sx={{ display: "flex", alignItems: "center", gap: 2 }}
+          >
+            <Box
+              sx={{
+                minWidth: "20px",
+                minHeight: "20px",
+                backgroundColor: cat.color,
+                borderRadius: "50%",
+                cursor: "pointer",
+                border: "1px solid #ccc",
+              }}
+            ></Box>
+            <Link
+              href={`/${cat.title}`}
+              onClick={() => setOpenDelete(true)}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 2,
+                width: "100%",
+              }}
             >
-              <Box
-                sx={{
-                  minWidth: "20px",
-                  minHeight: "20px",
-                  backgroundColor: cat.color,
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                  border: "1px solid #ccc",
+              {cat.title.charAt(0).toUpperCase() + cat.title.slice(1)}
+            </Link>
+            {!["work", "personal"].includes(cat.title.toLowerCase()) && (
+              <DeleteIcon
+                sx={{ cursor: "pointer" }}
+                onClick={() => {
+                  setOpenDelete(true);
+                  setId(cat.id);
                 }}
-              ></Box>
-              <Link
-                href={`/${cat.title}`}
-                onClick={() => setOpenDelete(true)}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 2,
-                  width: "100%",
-                }}
-              >
-                {cat.title.charAt(0).toUpperCase() + cat.title.slice(1)}
-              </Link>
-              {!["work", "personal"].includes(cat.title.toLowerCase()) && (
-                <DeleteIcon
-                  sx={{ cursor: "pointer" }}
-                  onClick={() => {
-                    setOpenDelete(true);
-                    setId(cat.id);
-                  }}
-                />
-              )}
-            </ListItem>
-          ))}
+              />
+            )}
+          </ListItem>
+        ))}
         <ListItem>
           <Button variant="text" onClick={handleClickOpen}>
             Add New List
