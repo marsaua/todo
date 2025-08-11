@@ -25,10 +25,12 @@ export default function AsideMenu({
 }: {
   children: React.ReactNode;
   categories: {
-    title: string;
-    color: string;
-    id: number;
-  }[];
+    data: {
+      title: string;
+      color: string;
+      id: number;
+    }[];
+  };
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
