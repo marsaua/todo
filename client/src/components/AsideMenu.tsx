@@ -63,8 +63,8 @@ export default function AsideMenu({
         <ListItem>
           <Link href="/home">All todos</Link>
         </ListItem>
-        {categories &&
-          categories?.map((cat) => (
+        {categories?.data &&
+          categories?.data.map((cat) => (
             <ListItem
               key={cat.id}
               sx={{ display: "flex", alignItems: "center", gap: 2 }}

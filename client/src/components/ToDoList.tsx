@@ -56,7 +56,7 @@ export default function ToDoList({
           gap: 4,
         }}
       >
-        {todos.data &&
+        {todos?.data &&
           todos.data.data.map((card: any) => (
             <ToDoItem key={card.id} card={card} categories={categories.data} />
           ))}
@@ -65,7 +65,7 @@ export default function ToDoList({
       <Pagination
         page={page}
         limit={limit}
-        totalPages={todos.meta?.totalPages}
+        totalPages={todos?.meta?.totalPages}
       />
     </Box>
   );
