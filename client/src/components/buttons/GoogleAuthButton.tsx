@@ -3,20 +3,18 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { CredentialResponse } from "@react-oauth/google";
 
 export default function GoogleAuthButton() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const handleSuccess = async (response: CredentialResponse) => {
     try {
-      const res = await fetch(
-        "http://localhost:4000/auth/google-authentication",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: response.credential,
-          }),
-        }
-      );
+      const res = await fetch(`http://${API_URL}/auth/google-authentication`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: response.credential,
+        }),
+      });
 
       if (!res.ok) {
         throw new Error("Google auth failed");

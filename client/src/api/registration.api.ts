@@ -7,8 +7,9 @@ export async function register(formData: FormData) {
     email: formData.get("email"),
     password: formData.get("password"),
   };
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch("http://localhost:4000/auth/register", {
+  const res = await fetch(`http://${API_URL}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -20,5 +21,5 @@ export async function register(formData: FormData) {
     throw new Error(data.message || "Registration failed");
   }
 
-  // redirect("/home");
+  redirect("/home");
 }

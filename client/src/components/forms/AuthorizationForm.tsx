@@ -4,6 +4,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
 
 export default function AuthorizationForm() {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -17,7 +18,7 @@ export default function AuthorizationForm() {
       return;
     }
 
-    const res = await fetch("http://localhost:4000/auth/login", {
+    const res = await fetch(`http://${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",

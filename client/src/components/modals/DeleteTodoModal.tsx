@@ -24,10 +24,7 @@ export default function DeleteTodoModal({
   const { showError } = useNotification();
   const handleDelete = async () => {
     try {
-      const res = await fetchWithAuth(
-        "DELETE",
-        `http://localhost:4000/todos/${card.id}`
-      );
+      const res = await fetchWithAuth("DELETE", `/todos/${card.id}`);
       if (!res) {
         const data: any = await res;
         throw new Error(data.message || "Failed to delete todo");

@@ -26,7 +26,7 @@ export default function AddNewListModal({
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    fetchWithAuth("POST", "http://localhost:4000/categories", { title, color });
+    fetchWithAuth("POST", "/categories", { title, color });
     handleClose();
   };
 

@@ -5,8 +5,9 @@ export async function fetchWithAuth<T>(
   url: string,
   body?: any
 ): Promise<T> {
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const makeRequest = async (): Promise<Response> => {
-    return await fetch(url, {
+    return await fetch(`http://${API_URL}/${url}`, {
       method,
       headers: {
         "Content-Type": "application/json",
@@ -19,13 +20,10 @@ export async function fetchWithAuth<T>(
   let res = await makeRequest();
 
   if (res.status === 401) {
-    const refreshRes = await fetch(
-      "http://localhost:4000/auth/refresh-tokens",
-      {
-        method: "POST",
-        credentials: "include",
-      }
-    );
+    const refreshRes = await fetch(`http://${API_URL}/auth/refresh-tokens`, {
+      method: "POST",
+      credentials: "include",
+    });
 
     if (!refreshRes.ok) {
       throw new Error("Unauthorized");
