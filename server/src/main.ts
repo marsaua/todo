@@ -11,13 +11,23 @@ async function bootstrap() {
   app.use(cookieParser());
   app.use(express.json());
   app.enableCors({
-    origin: [
-      'http://localhost:3001',
-      'https://todo-ki18.vercel.app',
-      'https://todo-ki18-git-main-marsauas-projects.vercel.app',
-      'https://todo-ki18-2sjbokhzb-marsauas-projects.vercel.app',
-    ],
+    origin: (origin, cb) => {
+      const allowlist = [
+        'http://localhost:3001',
+        'https://todo-ki18.vercel.app',
+      ];
+      const isAllowed =
+        !origin || allowlist.includes(origin) || /\.vercel\.app$/.test(origin);
+
+      if (isAllowed) {
+        cb(null, true);
+      } else {
+        cb(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.useGlobalPipes(
