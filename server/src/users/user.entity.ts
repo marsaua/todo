@@ -14,16 +14,16 @@ export class UserNext {
   id: number;
 
   @Column({
-    nullable: false,
+    nullable: true,
     length: 255,
   })
-  name: string;
+  name?: string;
 
   @Column({
-    nullable: false,
+    nullable: true,
     length: 255,
   })
-  surname: string;
+  surname?: string;
 
   @Column({
     unique: true,
@@ -51,5 +51,5 @@ export class UserNext {
   createdAt: Date;
 
   @OneToMany(() => Todo, (todo) => todo.author)
-  todos: Todo[];
+  todos?: Todo[];
 }

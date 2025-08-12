@@ -45,16 +45,16 @@ export class AuthService {
   }
 
   async registerUser(
-    name: string,
-    surname: string,
     email: string,
     password: string,
+    name?: string,
+    surname?: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.usersService.createUser({
-      name,
-      surname,
       email,
       password,
+      name: name || '',
+      surname: surname || '',
     });
 
     const tokens = await this.generateTokensProvider.generateTokens(user);
