@@ -49,7 +49,9 @@ export default function RegisterForm() {
         placeholder="Password"
         required
       />
-      <Button type="submit">Register</Button>
+      <Button variant="contained" type="submit">
+        Register
+      </Button>
     </Box>
   );
 }
