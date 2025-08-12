@@ -8,26 +8,36 @@ import { Get, Param, Post, Body, Delete } from '@nestjs/common';
 import { CreateCategoryDto } from './dtos/create-category.dto';
 import { Todo } from 'src/todos/todo.entity';
 import { TodosService } from 'src/todos/providers/todos.service';
-
+import { Inject, forwardRef } from '@nestjs/common';
+import { UsersService } from 'src/users/providers/users.service';
+import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
+import { ActiveUserType } from 'src/auth/enums/active-user-type';
 @Controller('categories')
 export class CategoriesController {
   constructor(
     private readonly todosService: TodosService,
     private readonly categoriesService: CategoriesService,
+    @Inject(forwardRef(() => UsersService))
+    private readonly usersService: UsersService,
   ) {}
   @Get()
-  public async getAllCategories() {
-    return await this.categoriesService.findAll();
+  public async getAllCategories(@ActiveUser() user: ActiveUserType) {
+    const userId = user.sub;
+    return await this.categoriesService.findAll(userId);
   }
   @Get(':id')
   public async getCategoryById(@Param('id') id: number) {
     return await this.categoriesService.findCategoryById(id);
   }
   @Post()
-  public async createCategory(@Body() createCategoryDto: CreateCategoryDto) {
+  public async createCategory(
+    @Body() createCategoryDto: CreateCategoryDto,
+    @ActiveUser() user: ActiveUserType,
+  ) {
     return await this.categoriesService.createCategory(
       createCategoryDto.title,
       createCategoryDto.color,
+      user.sub,
     );
   }
   @Delete(':id')

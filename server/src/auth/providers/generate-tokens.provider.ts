@@ -12,7 +12,12 @@ export class GenerateTokensProvider {
     public readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
-  public async signToken<T>(user: UserNext, expiresIn: number, payload?: T) {
+  public async signToken<T>(
+    user: UserNext,
+    expiresIn: number,
+    secret: string,
+    payload?: T,
+  ) {
     const token = await this.jwtService.signAsync(
       {
         sub: user.id,
@@ -22,7 +27,7 @@ export class GenerateTokensProvider {
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
         expiresIn: expiresIn,
-        secret: this.jwtConfiguration.secret,
+        secret: secret,
       },
     );
     return token;
@@ -30,10 +35,19 @@ export class GenerateTokensProvider {
 
   public async generateTokens(user: UserNext) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken(user, this.jwtConfiguration.accessTokenTtl, {
-        email: user.email,
-      }),
-      this.signToken(user, this.jwtConfiguration.refreshTokenTtl),
+      this.signToken(
+        user,
+        this.jwtConfiguration.accessTokenTtl,
+        this.jwtConfiguration.secret!,
+        {
+          email: user.email,
+        },
+      ),
+      this.signToken(
+        user,
+        this.jwtConfiguration.refreshTokenTtl,
+        this.jwtConfiguration.refreshTokenSecret!,
+      ),
     ]);
     return { accessToken, refreshToken };
   }

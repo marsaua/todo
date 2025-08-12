@@ -15,6 +15,8 @@ import jwtConfig from '../auth/config/jwt.config';
 import { JwtModule } from '@nestjs/jwt';
 import { FindOneByGoogleIdProveder } from './providers/find-one-by-google-id.provider.ts';
 import { CreateGoogleUserProvider } from './providers/create-google-user.provider';
+import { Category } from 'src/categories/category.entity';
+import { CategoriesModule } from 'src/categories/categories.module';
 @Module({
   controllers: [UsersController],
   providers: [
@@ -30,9 +32,10 @@ import { CreateGoogleUserProvider } from './providers/create-google-user.provide
   ],
   exports: [UsersService],
   imports: [
-    TypeOrmModule.forFeature([UserNext]),
+    TypeOrmModule.forFeature([UserNext, Category]),
     ConfigModule.forFeature(profileConfig),
     forwardRef(() => AuthModule),
+    forwardRef(() => CategoriesModule),
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
   ],

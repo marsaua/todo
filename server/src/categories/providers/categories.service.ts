@@ -7,6 +7,7 @@ import { Category } from '../category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Todo } from 'src/todos/todo.entity';
+import { ILike } from 'typeorm';
 
 @Injectable()
 export class CategoriesService {
@@ -17,10 +18,10 @@ export class CategoriesService {
     private readonly todoRepository: Repository<Todo>,
   ) {}
 
-  public async findAll() {
+  public async findAll(userId: number) {
     let categories: Category[];
     try {
-      categories = await this.categoryRepository.find({});
+      categories = await this.categoryRepository.findBy({ userId });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -50,27 +51,22 @@ export class CategoriesService {
     return category;
   }
 
-  public async createCategory(title: string, color: string) {
+  public async createCategory(title: string, color: string, userId: number) {
     let category: Category;
-    let categoryExists: Category | null;
-
-    try {
-      categoryExists = await this.categoryRepository.findOne({
-        where: { title },
-      });
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Something went wrong. Please try again later.',
-      );
-    }
-    if (categoryExists) {
+    const exists = await this.categoryRepository.exists({
+      where: { userId, title: ILike(title) },
+    });
+    if (exists) {
       throw new BadRequestException(
         'Category already exists. Please try again.',
       );
     }
 
-    const newCategory = this.categoryRepository.create({ title, color });
+    const newCategory = this.categoryRepository.create({
+      title,
+      color,
+      userId,
+    });
     try {
       category = await this.categoryRepository.save(newCategory);
     } catch (error) {

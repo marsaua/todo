@@ -32,7 +32,7 @@ export class RefreshTokensProvider {
       const payload = await this.jwtService.verifyAsync<
         Pick<ActiveUserType, 'sub'>
       >(refreshToken, {
-        secret: this.jwtConfiguration.secret,
+        secret: this.jwtConfiguration.refreshTokenSecret,
         audience: this.jwtConfiguration.audience,
         issuer: this.jwtConfiguration.issuer,
       });
