@@ -5,10 +5,8 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { UsersService } from '../../users/providers/users.service';
-import { UserNext } from '../../users/user.entity';
 import { HashingProvider } from '../../auth/providers/hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
-import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
 
 @Injectable()
@@ -65,5 +63,9 @@ export class AuthService {
 
   public async refreshTokens(refreshToken: string) {
     return this.refreshTokensProvider.refreshTokens(refreshToken);
+  }
+  public async logoutUser(userId: number) {
+    console.log(userId);
+    return true;
   }
 }

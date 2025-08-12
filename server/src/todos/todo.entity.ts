@@ -37,9 +37,14 @@ export class Todo {
   @CreateDateColumn()
   createdAt: Date;
 
+  @ManyToOne(() => Category, (category) => category)
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 
+  @ManyToOne(() => UserNext, (user) => user.todos, {
+    eager: true,
+    nullable: false,
+  })
   @ManyToOne(() => UserNext, (user) => user.todos, {
     eager: true,
     nullable: false,

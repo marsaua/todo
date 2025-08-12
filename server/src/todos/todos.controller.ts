@@ -15,7 +15,6 @@ import { CategoriesService } from '../categories/providers/categories.service';
 import { ConfigService } from '@nestjs/config';
 import { GetTodosDto } from './dtos/get-todo-param.dto';
 import { Paginated } from 'src/common/pagination/interfaces/pagination.interface';
-import { UserNext } from 'src/users/user.entity';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserType } from 'src/auth/enums/active-user-type';
 
@@ -39,8 +38,9 @@ export class TodosController {
   @Get()
   public async getAllTodos(
     @Query() query: GetTodosDto,
+    @ActiveUser() user: ActiveUserType,
   ): Promise<Paginated<Todo>> {
-    return this.todosService.findAll(query);
+    return this.todosService.findAll(query, user);
   }
 
   @Post()

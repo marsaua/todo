@@ -33,12 +33,19 @@ export class TodosService {
     private readonly userService: UsersService,
   ) {}
 
-  public async findAll(postQuery: GetTodosDto): Promise<Paginated<Todo>> {
+  public async findAll(
+    postQuery: GetTodosDto,
+    user: ActiveUserType,
+  ): Promise<Paginated<Todo>> {
     let todos: Paginated<Todo>;
     try {
       todos = await this.paginationProvider.paginateQuery(
         postQuery,
         this.todoRepository,
+        {
+          where: { author: { id: user.sub } },
+          relations: ['author', 'category'],
+        },
       );
     } catch (error) {
       console.log(error);

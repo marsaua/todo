@@ -18,6 +18,7 @@ import AddNewListModal from "@/components/modals/AddNewListModal";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteCategoryModal from "@/components/modals/DeleteCategoryModal";
 import { useState } from "react";
+import LogoutButton from "./buttons/LogoutButton";
 
 export default function AsideMenu({
   children,
@@ -109,6 +110,7 @@ export default function AsideMenu({
           </Button>
         </ListItem>
       </List>
+      <LogoutButton />
     </Box>
   );
 

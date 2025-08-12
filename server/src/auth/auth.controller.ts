@@ -14,9 +14,11 @@ import { RegisterDto } from './dtos/register.dto';
 import { UserNext } from '../users/user.entity';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type';
-import { Response } from 'express';
+import { CookieOptions, Response } from 'express';
 import { Res } from '@nestjs/common';
 import { Request } from 'express';
+import { ActiveUser } from './decorators/active-user.decorator';
+import { ActiveUserType } from './enums/active-user-type';
 
 @Controller('auth')
 export class AuthController {
@@ -111,5 +113,28 @@ export class AuthController {
   @Auth(AuthType.Bearer)
   public isAuthorized() {
     return true;
+  }
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  public async logoutUser(
+    @ActiveUser() user: ActiveUserType,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const isDev = process.env.NODE_ENV === 'development';
+    const sameSite: CookieOptions['sameSite'] = isDev ? 'lax' : 'none';
+
+    const currentUser = await this.authService.logoutUser(+user.sub);
+    const cookieBase = {
+      httpOnly: true,
+      sameSite,
+      secure: !isDev,
+      path: '/',
+      ...(process.env.COOKIES_DOMAIN
+        ? { domain: process.env.COOKIES_DOMAIN }
+        : {}),
+    };
+    res.cookie('accessToken', '', cookieBase);
+    res.cookie('refreshToken', '', cookieBase);
+    return currentUser;
   }
 }

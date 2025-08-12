@@ -54,8 +54,8 @@ export class CreateUserProvider {
     try {
       user = await this.userRepository.save(user);
       const defaultCategory = [
-        { title: 'Work', color: '#007bff', userId: user.id },
-        { title: 'Personal', color: '#28a745', userId: user.id },
+        { title: 'Work', color: '#FEF8DD', userId: user.id },
+        { title: 'Personal', color: '#E1F8DC', userId: user.id },
       ];
       try {
         await this.categoryRepository.save(defaultCategory);
