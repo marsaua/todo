@@ -2,10 +2,13 @@
 
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useLoginUserMutation } from "@/entities/user/queries";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function AuthorizationForm() {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
+  const loginMutation = useLoginUserMutation();
+  const { showSuccess, showError } = useNotification();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -13,25 +16,18 @@ export default function AuthorizationForm() {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    if (typeof email !== "string" || typeof password !== "string") {
-      alert("Invalid form data");
-      return;
-    }
-
-    const res = await fetch(`${API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      alert(data.message || "Login failed");
-      return;
-    }
-
-    router.push("/home");
+    loginMutation.mutate(
+      { email: email as string, password: password as string },
+      {
+        onSuccess: () => {
+          showSuccess("User logged in successfully");
+          router.push("/home");
+        },
+        onError: (error) => {
+          showError(error.message);
+        },
+      }
+    );
   };
 
   return (

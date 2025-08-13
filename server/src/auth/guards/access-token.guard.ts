@@ -49,8 +49,6 @@ export class AccessTokenGuard implements CanActivate {
     if (typeof authHeader === 'string' && authHeader.startsWith('Bearer ')) {
       return authHeader.split(' ')[1];
     }
-    console.log('Cookies:', request.cookies);
-    console.log('Access Token:', request.cookies?.accessToken);
     return request.cookies?.accessToken;
   }
 }

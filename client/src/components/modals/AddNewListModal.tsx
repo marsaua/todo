@@ -9,7 +9,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import getRandomColor from "@/helpers/randomColor";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useAddCategoryMutation } from "@/entities/category/queries";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function AddNewListModal({
   open,
@@ -24,9 +25,24 @@ export default function AddNewListModal({
   const [title, setTitle] = useState("");
   const color = getRandomColor();
 
+  const addCategoryMutation = useAddCategoryMutation();
+  const { showSuccess, showError } = useNotification();
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    fetchWithAuth("POST", "categories", { title, color });
+    addCategoryMutation.mutate(
+      { title, color },
+      {
+        onSuccess: () => {
+          showSuccess("Category added successfully");
+          handleClose();
+        },
+        onError: (error) => {
+          showError(error.message);
+        },
+      }
+    );
+
     handleClose();
   };
 

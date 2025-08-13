@@ -38,13 +38,15 @@ export class TodosService {
     user: ActiveUserType,
   ): Promise<Paginated<Todo>> {
     let todos: Paginated<Todo>;
+    console.log(user);
     try {
       todos = await this.paginationProvider.paginateQuery(
         postQuery,
         this.todoRepository,
         {
-          where: { author: { id: user.sub } },
-          relations: ['author', 'category'],
+          where: { authorId: user.sub },
+          relations: ['category', 'author'],
+          order: { createdAt: 'DESC' },
         },
       );
     } catch (error) {
@@ -53,6 +55,7 @@ export class TodosService {
         'Something went wrong. Please try again later.',
       );
     }
+    console.log(todos);
     return todos;
   }
 
@@ -81,7 +84,7 @@ export class TodosService {
     const newTodo = this.todoRepository.create({
       ...createTodoDto,
       categoryId: category.id,
-      author: author,
+      authorId: author.id,
     });
     try {
       await this.todoRepository.save(newTodo);

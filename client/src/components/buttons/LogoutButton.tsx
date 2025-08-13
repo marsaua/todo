@@ -1,21 +1,23 @@
 "use client";
 import { Button, Box } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useLogoutUserMutation } from "@/entities/user/queries";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function LogoutButton() {
   const router = useRouter();
+  const logoutMutation = useLogoutUserMutation();
+  const { showSuccess, showError } = useNotification();
   const handleLogout = async () => {
-    try {
-      const response: Response = await fetchWithAuth("POST", `auth/logout`);
-      if (!response.ok) {
-        throw new Error("Failed to logout");
-      }
-      console.log(response);
-    } catch (error) {
-      console.log(error);
-    }
-    router.push("/authorization");
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        showSuccess("User logged out successfully");
+        router.push("/authorization");
+      },
+      onError: (error) => {
+        showError(error.message);
+      },
+    });
   };
   return (
     <Box sx={{ ml: "26px" }}>

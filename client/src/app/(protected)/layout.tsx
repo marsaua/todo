@@ -1,46 +1,15 @@
 "use client";
 import AsideMenu from "@/components/AsideMenu";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-
-type Category = { title: string; color: string; id: number };
-type CategoriesResponse = {
-  data: Category[];
-};
+import { useCategoriesQuery } from "@/entities/category/queries";
 
 export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [categoriesResponse, setCategoriesResponse] =
-    useState<CategoriesResponse | null>(null);
+  const { data, isLoading, isError } = useCategoriesQuery();
 
-  const router = useRouter();
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data: CategoriesResponse = await fetchWithAuth(
-          "GET",
-          "categories"
-        );
-        if (data) {
-          setCategoriesResponse(data);
-        }
-      } catch (err) {
-        console.error("Unauthorized, redirecting to /authorization", err);
-        router.push("/authorization");
-      }
-    };
-
-    load();
-  }, [router]);
-
-  return (
-    <AsideMenu categories={categoriesResponse?.data || []}>
-      {children}
-    </AsideMenu>
-  );
+  if (isLoading) return <>Loading…</>;
+  if (isError || !data) return null;
+  return <AsideMenu categories={data.data}>{children}</AsideMenu>;
 }

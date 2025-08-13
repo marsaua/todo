@@ -39,7 +39,6 @@ export class RefreshTokensProvider {
 
       const user = await this.usersService.findOneById(Number(payload.sub));
       if (!user) throw new Error('User not found');
-      console.log('refreshed');
 
       return await this.generateTokensProvider.generateTokens(user);
     } catch (error) {

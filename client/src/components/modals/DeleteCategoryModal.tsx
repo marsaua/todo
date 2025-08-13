@@ -7,7 +7,7 @@ import {
   Button,
 } from "@mui/material";
 import { useNotification } from "@/context/NotificationContext";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useDeleteCategoryMutation } from "@/entities/category/queries";
 
 export default function DeleteCategoryModal({
   open,
@@ -19,19 +19,17 @@ export default function DeleteCategoryModal({
   id: number;
 }) {
   const { showSuccess, showError } = useNotification();
-  const handleSubmit = async (id: number) => {
-    try {
-      const res: any = await fetchWithAuth("DELETE", `categories/${id}`);
-
-      if (!res.ok) {
-        showError(res.message || "Failed to delete category");
-      } else {
-        showSuccess("Category deleted successfully. Refresh the page please");
+  const deleteCategoryMutation = useDeleteCategoryMutation();
+  const handleSubmit = () => {
+    deleteCategoryMutation.mutate(id, {
+      onSuccess: () => {
+        showSuccess("Category deleted successfully");
         onClose();
-      }
-    } catch (error: any) {
-      showError(error.message || "Something went wrong");
-    }
+      },
+      onError: (error) => {
+        showError(error.message);
+      },
+    });
   };
 
   return (
@@ -43,7 +41,7 @@ export default function DeleteCategoryModal({
         </DialogContentText>
         <DialogActions>
           <Button onClick={() => onClose()}>Cancel</Button>
-          <Button onClick={() => handleSubmit(id)}>Delete</Button>
+          <Button onClick={() => handleSubmit()}>Delete</Button>
         </DialogActions>
       </DialogContent>
     </Dialog>

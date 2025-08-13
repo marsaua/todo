@@ -20,20 +20,21 @@ export async function fetchWithAuth<T>(
   let res = await makeRequest();
 
   if (res.status === 401) {
-    const refreshRes = await fetch(`${API_URL}/auth/refresh-tokens`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    if (!refreshRes.ok) {
-      throw new Error("Unauthorized");
+    try {
+      await fetch(`${API_URL}/auth/refresh-tokens`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Refresh failed:", error);
     }
 
     res = await makeRequest();
   }
 
   if (!res.ok) {
-    throw new Error(`Request failed: ${res.status}`);
+    window.location.replace("/authorization");
+    throw new Error("Unauthorized");
   }
 
   return res.json();

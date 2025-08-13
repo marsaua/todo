@@ -2,10 +2,9 @@
 import { Box } from "@mui/material";
 import ToDoItem from "./ToDoItem";
 import AddTodoItem from "./AddTodoItem";
-import Pagination from "./Pagination"; // ← окремий компонент пагінації, якщо є
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
-import { useState } from "react";
-import { useEffect } from "react";
+import Pagination from "./Pagination";
+import { useTodosQuery } from "@/entities/todo/queries";
+import { useCategoriesQuery } from "@/entities/category/queries";
 
 export default function ToDoList({
   page,
@@ -14,36 +13,22 @@ export default function ToDoList({
   page: number;
   limit: number;
 }) {
-  const [categories, setCategories] = useState<any>([]);
-  const [todos, setTodos] = useState<any>([]);
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await fetchWithAuth("GET", "categories");
-        setCategories(data);
-      } catch (err) {
-        console.error("Unauthorized, redirecting to /authorization", err);
-      }
-    };
+  const {
+    data: categories,
+    isLoading: categoriesLoading,
+    isError: categoriesError,
+  } = useCategoriesQuery();
 
-    load();
-  }, []);
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await fetchWithAuth(
-          "GET",
-          `todos?page=${page}&limit=${limit}`
-        );
-        setTodos(data);
-      } catch (err) {
-        console.error("Unauthorized, redirecting to /authorization", err);
-      }
-    };
-
-    load();
-  }, [page, limit]);
+  const {
+    data: todos,
+    isLoading,
+    isError,
+  } = useTodosQuery({
+    page,
+    limit,
+  });
+  if (isLoading || categoriesLoading) return <p>Loading...</p>;
+  if (isError || categoriesError) return <p>Error</p>;
 
   return (
     <Box>
@@ -56,14 +41,14 @@ export default function ToDoList({
       >
         {todos?.data &&
           todos.data.data.map((card: any) => (
-            <ToDoItem key={card.id} card={card} categories={categories.data} />
+            <ToDoItem key={card.id} card={card} categories={categories?.data} />
           ))}
         <AddTodoItem />
       </Box>
       <Pagination
         page={page}
         limit={limit}
-        totalPages={todos?.data?.meta?.totalPages}
+        totalPages={todos?.data?.meta?.totalPages ?? 1}
       />
     </Box>
   );

@@ -47,4 +47,7 @@ export class Todo {
   })
   @JoinColumn({ name: 'authorId' })
   author: UserNext;
+
+  @Column({ name: 'authorId', type: 'uuid' })
+  authorId: number;
 }

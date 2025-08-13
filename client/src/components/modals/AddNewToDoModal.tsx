@@ -14,10 +14,11 @@ import {
   Box,
   TextareaAutosize,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
 import { useQueryClient } from "@tanstack/react-query";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useAddTodoMutation } from "@/entities/todo/queries";
+import { useCategoriesQuery } from "@/entities/category/queries";
 
 type Category = {
   id: number;
@@ -35,44 +36,34 @@ export default function AddNewToDoModal({
   const [categoryId, setCategoryId] = useState<string>("");
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
-  const [categories, setCategories] = useState<Category[]>([]);
-  const { showError } = useNotification();
+  const { showSuccess, showError } = useNotification();
   const queryClient = useQueryClient();
+
+  const addTodoMutation = useAddTodoMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      await fetchWithAuth("POST", "todos", {
-        title,
-        content,
-        categoryId: Number(categoryId),
-      });
-      handleClose();
-      setTitle("");
-      setContent("");
-      setCategoryId("");
-      setCategories([]);
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-    } catch (error: any) {
-      showError(error.message || "Something went wrong");
-    }
+    addTodoMutation.mutate(
+      { title, content, categoryId: Number(categoryId) },
+      {
+        onSuccess: () => {
+          showSuccess("Todo added successfully");
+          handleClose();
+          setTitle("");
+          setContent("");
+          setCategoryId("");
+          queryClient.invalidateQueries({ queryKey: ["todos"] });
+        },
+        onError: (error) => {
+          showError(error.message);
+        },
+      }
+    );
   };
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await fetchWithAuth<{ data: Category[] }>(
-          "GET",
-          "categories"
-        );
-        setCategories(res.data);
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
+  const { data: categories, isLoading, isError } = useCategoriesQuery();
+  if (isLoading) return <>Loading…</>;
+  if (isError || !categories) return <></>;
 
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
@@ -117,7 +108,7 @@ export default function AddNewToDoModal({
               label="Category"
               onChange={(e) => setCategoryId(e.target.value)}
             >
-              {categories.map((category) => (
+              {categories?.data.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.title}
                 </MenuItem>

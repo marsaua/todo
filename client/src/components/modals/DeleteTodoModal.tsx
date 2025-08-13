@@ -9,7 +9,7 @@ import {
 import { Button } from "@mui/material";
 import getQueryClient from "@/lib/getQueryClient";
 import { useNotification } from "@/context/NotificationContext";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useDeleteTodoMutation } from "@/entities/todo/queries";
 
 export default function DeleteTodoModal({
   open,
@@ -18,22 +18,28 @@ export default function DeleteTodoModal({
 }: {
   open: boolean;
   handleClose: () => void;
-  card: any;
+  card: {
+    id: number;
+    title: string;
+    content: string;
+    categoryId: number;
+  };
 }) {
   const queryClient = getQueryClient();
-  const { showError } = useNotification();
+  const { showSuccess, showError } = useNotification();
+  const deleteTodoMutation = useDeleteTodoMutation();
+
   const handleDelete = async () => {
-    try {
-      const res = await fetchWithAuth("DELETE", `todos/${card.id}`);
-      if (!res) {
-        const data: any = await res;
-        throw new Error(data.message || "Failed to delete todo");
-      }
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
-      handleClose();
-    } catch (error: any) {
-      showError(error.message || "Something went wrong");
-    }
+    deleteTodoMutation.mutate(card.id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["todos", "list"] });
+        handleClose();
+        showSuccess("Todo deleted successfully");
+      },
+      onError: (error) => {
+        showError(error.message || "Something went wrong");
+      },
+    });
   };
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">

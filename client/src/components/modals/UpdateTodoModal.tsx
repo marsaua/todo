@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
-import { fetchWithAuth } from "@/helpers/fetchWithAuth";
+import { useUpdateTodoMutation } from "@/entities/todo/queries";
 
 export default function UpdateTodoModal({
   open,
@@ -33,21 +33,31 @@ export default function UpdateTodoModal({
   const [categoryId, setCategoryId] = useState(card.category.id);
   const id = card.id;
 
-  const { showError } = useNotification();
+  const { showSuccess, showError } = useNotification();
+
+  const updateTodoMutation = useUpdateTodoMutation();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      await fetchWithAuth("PUT", `todos/${id}`, {
-        title,
-        content,
-        categoryId: categoryId,
-      });
-      handleClose();
-    } catch (error: any) {
-      showError(error.message || "Something went wrong");
-      handleClose();
-    }
+    updateTodoMutation.mutate(
+      {
+        id,
+        data: {
+          title,
+          content,
+          categoryId: categoryId,
+        },
+      },
+      {
+        onSuccess: () => {
+          showSuccess("Todo updated successfully");
+          handleClose();
+        },
+        onError: (error) => {
+          showError(error.message || "Something went wrong");
+        },
+      }
+    );
   };
 
   return (
@@ -94,7 +104,7 @@ export default function UpdateTodoModal({
               label="Category"
               onChange={(e) => setCategoryId(e.target.value)}
             >
-              {categories.map((item: any) => (
+              {categories?.map((item: any) => (
                 <MenuItem key={item.id} value={item.id}>
                   {item.title}
                 </MenuItem>

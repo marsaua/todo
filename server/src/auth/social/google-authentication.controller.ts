@@ -31,7 +31,6 @@ export class GoogleAuthenticationController {
     const isProd = process.env.NODE_ENV === 'production';
     const tokens =
       await this.googleAuthenticationService.authenticate(googleTokenDto);
-    console.log(tokens);
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,
       secure: isProd ? true : false,

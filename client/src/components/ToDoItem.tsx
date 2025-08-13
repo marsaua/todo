@@ -9,8 +9,6 @@ export default function ToDoItem({
   card: any;
   categories: any;
 }) {
-  console.log(categories);
-  console.log(card);
   return (
     <Card
       key={card.id}

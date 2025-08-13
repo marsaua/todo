@@ -70,7 +70,6 @@ export class AuthService {
     return this.refreshTokensProvider.refreshTokens(refreshToken);
   }
   public async logoutUser(userId: number) {
-    console.log(userId);
     return true;
   }
 }

@@ -7,50 +7,55 @@ import { Paginated } from '../interfaces/pagination.interface';
 
 @Injectable()
 export class PaginationProvider {
-  constructor(
-    //Inject request
-    @Inject(REQUEST)
-    private readonly request: Request,
-  ) {}
+  constructor(@Inject(REQUEST) private readonly request: Request) {}
 
   public async paginateQuery<T extends ObjectLiteral>(
-    paginationQuery: PaginationQueryDto,
+    q: PaginationQueryDto,
     repository: Repository<T>,
-    options?: FindManyOptions<T>,
+    options: FindManyOptions<T> = {},
   ): Promise<Paginated<T>> {
-    const results = await repository.find({
+    const page = Math.max(1, Number(q.page ?? 1));
+    const limit = Math.max(1, Number(q.limit ?? 10));
+    const skip = (page - 1) * limit;
+
+    const [data, matched] = await repository.findAndCount({
       ...options,
-      take: paginationQuery.limit,
-      skip: ((paginationQuery.page ?? 1) - 1) * (paginationQuery.limit ?? 10),
+      take: limit,
+      skip,
     });
 
-    //Create the request URLs
-    const baseURL =
-      this.request.protocol + '://' + this.request.headers.host + '/';
-    const newResults = new URL(this.request.url, baseURL);
-    //Calculate page numbers
-    const totalItems = await repository.count();
-    const totalPages = Math.ceil(totalItems / (paginationQuery.limit ?? 10));
-    const currentPage = paginationQuery.page ?? 1;
-    const prevPage = currentPage > 1 ? currentPage - 1 : currentPage;
-    const nextPage = currentPage < totalPages ? currentPage + 1 : currentPage;
+    const baseURL = `${this.request.protocol}://${this.request.headers.host}`;
+    const url = new URL(this.request.url, baseURL);
+    url.searchParams.set('limit', String(limit));
 
-    const finalResponse: Paginated<T> = {
-      data: results,
+    const totalPagesRaw = Math.ceil(matched / limit);
+    const totalPages = Math.max(1, totalPagesRaw || 1);
+    const currentPage = Math.min(page, totalPages);
+
+    const make = (p: number) => {
+      const u = new URL(url.toString());
+      u.searchParams.set('page', String(p));
+      return u.toString();
+    };
+
+    const hasPrev = currentPage > 1;
+    const hasNext = currentPage < totalPages;
+
+    return {
+      data,
       meta: {
-        itemsPerPage: paginationQuery.limit ?? 10,
-        totalItems: totalItems,
-        currentPage: paginationQuery.page ?? 1,
-        totalPages: totalPages,
+        itemsPerPage: limit,
+        totalItems: matched,
+        currentPage,
+        totalPages,
       },
       links: {
-        first: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=1`,
-        last: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${totalPages}`,
-        current: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${currentPage}`,
-        next: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${nextPage}`,
-        prev: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${prevPage}`,
+        first: make(1),
+        last: make(totalPages),
+        current: make(currentPage),
+        prev: hasPrev ? make(currentPage - 1) : '',
+        next: hasNext ? make(currentPage + 1) : '',
       },
     };
-    return finalResponse;
   }
 }
