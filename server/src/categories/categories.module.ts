@@ -6,6 +6,7 @@ import { Category } from './category.entity';
 import { TodosModule } from '../todos/todos.module';
 import { Todo } from '../todos/todo.entity';
 import { UsersModule } from 'src/users/users.module';
+import { DefaultCategoriesService } from './providers/default-categories.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Category, Todo]),
@@ -13,7 +14,11 @@ import { UsersModule } from 'src/users/users.module';
     forwardRef(() => UsersModule),
   ],
   controllers: [CategoriesController],
-  providers: [CategoriesService],
-  exports: [CategoriesService, TypeOrmModule.forFeature([Category])],
+  providers: [CategoriesService, DefaultCategoriesService],
+  exports: [
+    CategoriesService,
+    TypeOrmModule.forFeature([Category]),
+    DefaultCategoriesService,
+  ],
 })
 export class CategoriesModule {}

@@ -13,6 +13,8 @@ import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { RefreshTokensProvider } from './providers/refresh-tokens.provider';
 import { GoogleAuthenticationService } from './social/providers/google-authentication.service';
 import { GoogleAuthenticationController } from './social/google-authentication.controller';
+import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
+import { CategoriesModule } from 'src/categories/categories.module';
 
 @Module({
   controllers: [AuthController, GoogleAuthenticationController],
@@ -26,6 +28,7 @@ import { GoogleAuthenticationController } from './social/google-authentication.c
     GenerateTokensProvider,
     RefreshTokensProvider,
     GoogleAuthenticationService,
+    DefaultCategoriesService,
   ],
   exports: [
     HashingProvider,
@@ -33,11 +36,13 @@ import { GoogleAuthenticationController } from './social/google-authentication.c
     JwtService,
     GenerateTokensProvider,
     RefreshTokensProvider,
+    DefaultCategoriesService,
   ],
   imports: [
     forwardRef(() => UsersModule),
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
+    forwardRef(() => CategoriesModule),
   ],
 })
 export class AuthModule {}

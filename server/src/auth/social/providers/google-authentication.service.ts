@@ -11,6 +11,7 @@ import { forwardRef } from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
 import { GenerateTokensProvider } from 'src/auth/providers/generate-tokens.provider';
 import { GoogleTokenDto } from 'src/auth/social/dtos/google-token.dto';
+import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
 
 @Injectable()
 export class GoogleAuthenticationService implements OnModuleInit {
@@ -29,6 +30,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
      * Inject generateTokensProvider
      */
     private readonly generateTokensProvider: GenerateTokensProvider,
+    private readonly defaultCategoriesService: DefaultCategoriesService,
   ) {}
 
   onModuleInit() {
@@ -55,6 +57,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
 
       // If user id found generate the tokens
       if (user) {
+        await this.defaultCategoriesService.ensureForUser(user.id);
         return await this.generateTokensProvider.generateTokens(user);
       } else {
         // If not create a new user and generate the tokens
@@ -64,6 +67,8 @@ export class GoogleAuthenticationService implements OnModuleInit {
           lastName: lastName,
           googleId: googleId,
         });
+        await this.defaultCategoriesService.ensureForUser(newUser.id);
+
         return await this.generateTokensProvider.generateTokens(newUser);
       }
 

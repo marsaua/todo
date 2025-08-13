@@ -8,6 +8,7 @@ import { UsersService } from '../../users/providers/users.service';
 import { HashingProvider } from '../../auth/providers/hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
+import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,8 @@ export class AuthService {
     private readonly generateTokensProvider: GenerateTokensProvider,
 
     private readonly refreshTokensProvider: RefreshTokensProvider,
+
+    private readonly defaultCategoriesService: DefaultCategoriesService,
   ) {}
 
   async autherizeUser(
@@ -36,6 +39,8 @@ export class AuthService {
       password,
       user.password!,
     );
+    await this.defaultCategoriesService.ensureForUser(user.id);
+
     if (!isPasswordMatched) {
       throw new BadRequestException('Invalid credentials');
     }
@@ -56,7 +61,7 @@ export class AuthService {
       name: name || '',
       surname: surname || '',
     });
-
+    await this.defaultCategoriesService.ensureForUser(user.id);
     const tokens = await this.generateTokensProvider.generateTokens(user);
     return tokens;
   }

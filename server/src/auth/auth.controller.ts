@@ -7,6 +7,7 @@ import {
   UnauthorizedException,
   Req,
   Get,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './providers/auth.service';
 import { LoginDto } from './dtos/login.dto';
@@ -19,12 +20,14 @@ import { Res } from '@nestjs/common';
 import { Request } from 'express';
 import { ActiveUser } from './decorators/active-user.decorator';
 import { ActiveUserType } from './enums/active-user-type';
+import { EnsureDefaultCategoriesGuard } from 'src/common/guards/ensure-default-categories.guard';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @UseGuards(EnsureDefaultCategoriesGuard)
   @HttpCode(200)
   @Auth(AuthType.None)
   async login(
@@ -56,6 +59,7 @@ export class AuthController {
   @Post('register')
   @HttpCode(201)
   @Auth(AuthType.None)
+  @UseGuards(EnsureDefaultCategoriesGuard)
   async register(
     @Body() registerDto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
