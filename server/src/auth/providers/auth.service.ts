@@ -56,8 +56,8 @@ export class AuthService {
     surname?: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     const user = await this.usersService.createUser({
-      email,
-      password,
+      email: email,
+      password: password,
       name: name || '',
       surname: surname || '',
     });

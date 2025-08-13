@@ -65,10 +65,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ tokens: { accessToken: string; refreshToken: string } }> {
     const tokens = await this.authService.registerUser(
-      registerDto.name,
-      registerDto.surname,
       registerDto.email,
       registerDto.password,
+      registerDto.name,
+      registerDto.surname,
     );
     res.cookie('accessToken', tokens.accessToken, {
       httpOnly: true,

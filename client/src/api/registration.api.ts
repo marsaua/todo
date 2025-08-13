@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 
 export async function register(formData: FormData) {
   const userData = {
-    name: formData.get("name"),
-    surname: formData.get("surname"),
     email: formData.get("email"),
     password: formData.get("password"),
+    name: formData.get("name"),
+    surname: formData.get("surname"),
   };
   const API_URL = process.env.NEXT_PUBLIC_API_URL;
 

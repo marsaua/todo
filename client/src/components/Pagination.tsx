@@ -24,6 +24,7 @@ export default function Pagination({
 
     router.push(`?${params.toString()}`);
   };
+  console.log(totalPages);
 
   return (
     <Box

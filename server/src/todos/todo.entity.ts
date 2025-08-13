@@ -45,10 +45,6 @@ export class Todo {
     eager: true,
     nullable: false,
   })
-  @ManyToOne(() => UserNext, (user) => user.todos, {
-    eager: true,
-    nullable: false,
-  })
   @JoinColumn({ name: 'authorId' })
   author: UserNext;
 }
