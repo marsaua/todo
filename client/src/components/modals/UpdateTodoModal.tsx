@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNotification } from "@/context/NotificationContext";
+import { fetchWithAuth } from "@/helpers/fetchWithAuth";
 
 export default function UpdateTodoModal({
   open,
@@ -31,18 +32,16 @@ export default function UpdateTodoModal({
   const [content, setContent] = useState(card.content);
   const [categoryId, setCategoryId] = useState(card.category.id);
   const id = card.id;
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const { showError } = useNotification();
 
-  const handleSubmit = async (): Promise<void> => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     try {
-      await fetch(`http://${API_URL}/todos/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, content, categoryId: categoryId }),
+      await fetchWithAuth("PUT", `todos/${id}`, {
+        title,
+        content,
+        categoryId: categoryId,
       });
       handleClose();
     } catch (error: any) {

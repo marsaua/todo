@@ -6,6 +6,7 @@ export default async function HomePage({
   searchParams: Promise<{ page?: string; limit?: string }>;
 }) {
   const params = await searchParams;
+  console.log(params);
   const pageInt = Number(params.page ?? "1");
   const limitInt = Number(params.limit ?? "5");
 

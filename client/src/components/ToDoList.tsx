@@ -43,9 +43,7 @@ export default function ToDoList({
     };
 
     load();
-  }, []);
-
-  console.log(todos);
+  }, [page, limit]);
 
   return (
     <Box>
@@ -65,7 +63,7 @@ export default function ToDoList({
       <Pagination
         page={page}
         limit={limit}
-        totalPages={todos?.meta?.totalPages}
+        totalPages={todos?.data?.meta?.totalPages}
       />
     </Box>
   );

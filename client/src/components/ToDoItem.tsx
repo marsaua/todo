@@ -35,7 +35,7 @@ export default function ToDoItem({
           marginBottom: 2,
         }}
       >
-        {/* <UpdateTodoButton card={card} categories={categories} /> */}
+        <UpdateTodoButton card={card} categories={categories} />
         <DeleteTodoButton card={card} />
       </Box>
     </Card>

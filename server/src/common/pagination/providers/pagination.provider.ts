@@ -16,41 +16,49 @@ export class PaginationProvider {
   public async paginateQuery<T extends ObjectLiteral>(
     paginationQuery: PaginationQueryDto,
     repository: Repository<T>,
-    options?: FindManyOptions<T>,
+    options: FindManyOptions<T> = {},
   ): Promise<Paginated<T>> {
-    const results = await repository.find({
-      ...options,
-      take: paginationQuery.limit,
-      skip: ((paginationQuery.page ?? 1) - 1) * (paginationQuery.limit ?? 10),
+    const limit = Number(paginationQuery.limit) || 10;
+    const page = Number(paginationQuery.page) || 1;
+    const skip = (page - 1) * limit;
+
+    const order =
+      options.order ?? ({ id: 'DESC' } as FindManyOptions<T>['order']);
+
+    const [results, totalItems] = await repository.findAndCount({
+      ...options, // важливо — де є where/relations
+      take: limit,
+      skip,
+      order,
     });
 
-    //Create the request URLs
     const baseURL =
       this.request.protocol + '://' + this.request.headers.host + '/';
-    const newResults = new URL(this.request.url, baseURL);
-    //Calculate page numbers
-    const totalItems = await repository.count();
-    const totalPages = Math.ceil(totalItems / (paginationQuery.limit ?? 10));
-    const currentPage = paginationQuery.page ?? 1;
-    const prevPage = currentPage > 1 ? currentPage - 1 : currentPage;
-    const nextPage = currentPage < totalPages ? currentPage + 1 : currentPage;
+    const url = new URL(this.request.url, baseURL);
 
-    const finalResponse: Paginated<T> = {
+    const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+    const currentPage = Math.min(page, totalPages);
+    const prevPage = currentPage > 1 ? currentPage - 1 : 1;
+    const nextPage = currentPage < totalPages ? currentPage + 1 : totalPages;
+
+    const makeLink = (p: number) =>
+      `${url.origin}${url.pathname}?limit=${limit}&page=${p}`;
+
+    return {
       data: results,
       meta: {
-        itemsPerPage: paginationQuery.limit ?? 10,
-        totalItems: totalItems,
-        currentPage: paginationQuery.page ?? 1,
-        totalPages: totalPages,
+        itemsPerPage: limit,
+        totalItems,
+        currentPage,
+        totalPages,
       },
       links: {
-        first: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=1`,
-        last: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${totalPages}`,
-        current: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${currentPage}`,
-        next: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${nextPage}`,
-        prev: `${newResults.origin}${newResults.pathname}?limit=${paginationQuery.limit}&page=${prevPage}`,
+        first: makeLink(1),
+        last: makeLink(totalPages),
+        current: makeLink(currentPage),
+        next: makeLink(nextPage),
+        prev: makeLink(prevPage),
       },
     };
-    return finalResponse;
   }
 }
