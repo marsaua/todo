@@ -17,7 +17,7 @@ export default function ToDoItem({
       sx={{
         maxWidth: "400px",
         minWidth: "250px",
-        backgroundColor: categories.find(
+        backgroundColor: categories?.find(
           (category: any) => category.id === card.categoryId
         )?.color,
       }}
@@ -25,7 +25,7 @@ export default function ToDoItem({
       <CardContent>
         <Typography variant="h4">{card.title}</Typography>
         <Typography variant="body1">{card.content}</Typography>
-        <Typography variant="body1">{card.category.title}</Typography>
+        <Typography variant="body1">{card.category?.title}</Typography>
       </CardContent>
       <Box
         sx={{
