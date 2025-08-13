@@ -25,7 +25,7 @@ export default function ToDoItem({
       <CardContent>
         <Typography variant="h4">{card.title}</Typography>
         <Typography variant="body1">{card.content}</Typography>
-        <Typography variant="body1">{card.title}</Typography>
+        <Typography variant="body1">{card.category.title}</Typography>
       </CardContent>
       <Box
         sx={{
