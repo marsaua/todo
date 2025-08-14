@@ -81,8 +81,6 @@ export default function AsideMenu({
               }}
             ></Box>
             <Link
-              href={`/${cat.title}`}
-              onClick={() => setOpenDelete(true)}
               sx={{
                 display: "flex",
                 alignItems: "center",
