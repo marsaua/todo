@@ -9,9 +9,11 @@ import { useCategoriesQuery } from "@/entities/category/queries";
 export default function ToDoList({
   page,
   limit,
+  categoryId,
 }: {
   page: number;
   limit: number;
+  categoryId?: number;
 }) {
   const {
     data: categories,
@@ -26,6 +28,7 @@ export default function ToDoList({
   } = useTodosQuery({
     page,
     limit,
+    categoryId: categoryId,
   });
   if (isLoading || categoriesLoading) return <p>Loading...</p>;
   if (isError || categoriesError) return <p>Error</p>;

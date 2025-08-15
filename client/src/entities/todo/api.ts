@@ -24,8 +24,12 @@ export type TodosResponse = {
   };
 };
 
-export const getTodos = (page: number, limit: number) =>
-  fetchWithAuth<TodosResponse>("GET", `todos?page=${page}&limit=${limit}`);
+export const getTodos = (page: number, limit: number, categoryId?: number) => {
+  return fetchWithAuth<TodosResponse>(
+    "GET",
+    `todos?page=${page}&limit=${limit}&categoryId=${categoryId}`
+  );
+};
 
 export const addTodo = (data: {
   title: string;

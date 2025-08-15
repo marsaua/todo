@@ -5,8 +5,8 @@ export const qk = {
   todos: {
     root: () => ["todos"] as const,
     listRoot: () => ["todos", "list"] as const,
-    list: (page: number, limit: number) =>
-      ["todos", "list", page, limit] as const,
+    list: (page: number, limit: number, categoryId?: number) =>
+      ["todos", "list", page, limit, categoryId ?? null] as const,
     byId: (id: number) => ["todos", "byId", id] as const,
   },
 };
@@ -14,13 +14,15 @@ export const qk = {
 export function useTodosQuery({
   page,
   limit,
+  categoryId,
 }: {
   page: number;
   limit: number;
+  categoryId?: number;
 }) {
   return useQuery({
-    queryKey: qk.todos.list(page, limit),
-    queryFn: () => getTodos(page, limit),
+    queryKey: qk.todos.list(page, limit, categoryId),
+    queryFn: () => getTodos(page, limit, categoryId),
     placeholderData: (prev) => prev,
     retry: 1,
     refetchOnWindowFocus: false,

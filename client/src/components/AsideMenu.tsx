@@ -19,6 +19,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import DeleteCategoryModal from "@/components/modals/DeleteCategoryModal";
 import { useState } from "react";
 import LogoutButton from "./buttons/LogoutButton";
+import { useRouter } from "next/navigation";
 
 export default function AsideMenu({
   children,
@@ -39,6 +40,8 @@ export default function AsideMenu({
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [id, setId] = useState(0);
+  const router = useRouter();
+
   const handleCloseDelete = () => {
     setOpenDelete(false);
     setId(0);
@@ -63,7 +66,9 @@ export default function AsideMenu({
       <Typography sx={{ p: 2, mt: 2, fontWeight: "bold" }}>Tasks</Typography>
       <List>
         <ListItem>
-          <Link href="/home">All todos</Link>
+          <Link onClick={() => router.push("/home?categoryId=0")}>
+            All todos
+          </Link>
         </ListItem>
         {categories?.map((cat) => (
           <ListItem
@@ -88,6 +93,7 @@ export default function AsideMenu({
                 gap: 2,
                 width: "100%",
               }}
+              onClick={() => router.push(`/home?categoryId=${cat.id}`)}
             >
               {cat.title.charAt(0).toUpperCase() + cat.title.slice(1)}
             </Link>

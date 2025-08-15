@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Todo } from '../todo.entity';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateTodoDto } from '../dtos/create-todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateTodoDto } from '../dtos/update-todo.dto';
@@ -38,13 +38,18 @@ export class TodosService {
     user: ActiveUserType,
   ): Promise<Paginated<Todo>> {
     let todos: Paginated<Todo>;
-    console.log(user);
+    console.log(postQuery);
     try {
+      const where: FindOptionsWhere<Todo> = { authorId: user.sub };
+
+      if (postQuery.categoryId) {
+        where.categoryId = postQuery.categoryId;
+      }
       todos = await this.paginationProvider.paginateQuery(
         postQuery,
         this.todoRepository,
         {
-          where: { authorId: user.sub },
+          where,
           relations: ['category', 'author'],
           order: { createdAt: 'DESC' },
         },
@@ -55,7 +60,6 @@ export class TodosService {
         'Something went wrong. Please try again later.',
       );
     }
-    console.log(todos);
     return todos;
   }
 
