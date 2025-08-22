@@ -10,4 +10,8 @@ export default Joi.object({
   DATABASE_PORT: Joi.number().required(),
   DATABASE_NAME: Joi.string().required(),
   API_VERSION: Joi.string().required(),
+  MAILER_HOST: Joi.string().required(),
+  SMTP_USERNAME: Joi.string().required(),
+  SMTP_PASSWORD: Joi.string().required(),
+  MAILER_PORT: Joi.number().required(),
 });
