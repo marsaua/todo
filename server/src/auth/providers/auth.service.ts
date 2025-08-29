@@ -9,7 +9,7 @@ import { HashingProvider } from '../../auth/providers/hashing.provider';
 import { GenerateTokensProvider } from './generate-tokens.provider';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
 import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
-
+import { CompaniesService } from 'src/companies/providers/companies.service';
 @Injectable()
 export class AuthService {
   constructor(
@@ -24,28 +24,36 @@ export class AuthService {
     private readonly refreshTokensProvider: RefreshTokensProvider,
 
     private readonly defaultCategoriesService: DefaultCategoriesService,
+
+    private readonly companiesService: CompaniesService,
   ) {}
 
-  async autherizeUser(
+  async authorizeUser(
     email: string,
     password: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {
-    const user = await this.usersService.findOneUserByEmail(email);
-    if (!user) {
+    const user = await this.usersService.findOneUserByEmail(email); // -> UserNext | null
+    const account =
+      user ?? (await this.companiesService.findOneCompanyByEmail(email)); // -> UserNext|Company|null
+
+    if (!account) {
       throw new BadRequestException('User not found');
     }
-
+    console.log(account);
     const isPasswordMatched = await this.hashingProvider.comparePassword(
       password,
-      user.password!,
+      account.password!,
     );
-    await this.defaultCategoriesService.ensureForUser(user.id);
+    await this.defaultCategoriesService.ensureForUser(account.id);
 
     if (!isPasswordMatched) {
       throw new BadRequestException('Invalid credentials');
     }
 
-    const tokens = await this.generateTokensProvider.generateTokens(user);
+    const tokens = await this.generateTokensProvider.generateTokens(
+      account.id,
+      account.email,
+    );
     return tokens;
   }
 
@@ -62,7 +70,10 @@ export class AuthService {
       surname: surname || '',
     });
     await this.defaultCategoriesService.ensureForUser(user.id);
-    const tokens = await this.generateTokensProvider.generateTokens(user);
+    const tokens = await this.generateTokensProvider.generateTokens(
+      user.id,
+      user.email,
+    );
     return tokens;
   }
 

@@ -24,6 +24,8 @@ import { AuthenticationGuard } from './auth/guards/authentification.guard';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataResponceInterceptor } from './common/interceptors/data-responce/data-responce.interceptor';
 import { MailModule } from './mail/mail.module';
+import { CompaniesModule } from './companies/companies.module';
+import Company from './companies/company.entity';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -31,6 +33,7 @@ const ENV = process.env.NODE_ENV;
     TodosModule,
     CategoriesModule,
     UsersModule,
+    CompaniesModule,
     ConfigModule.forRoot({
       envFilePath: join(process.cwd(), `.env.${ENV}`),
       isGlobal: true,
@@ -42,7 +45,7 @@ const ENV = process.env.NODE_ENV;
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        entities: [Todo, Category, UserNext],
+        // entities: [Todo, Category, UserNext, Company],
         synchronize: true,
         url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,
@@ -51,12 +54,14 @@ const ENV = process.env.NODE_ENV;
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
+        ssl: false,
       }),
     }),
-    TypeOrmModule.forFeature([Todo, Category, UserNext]),
+    TypeOrmModule.forFeature([Todo, Category, UserNext, Company]),
     PaginationModule,
     AuthModule,
     MailModule,
+    CompaniesModule,
   ],
   controllers: [AppController],
   providers: [

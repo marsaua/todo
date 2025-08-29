@@ -4,7 +4,6 @@ import {
   Body,
   HttpCode,
   HttpStatus,
-  UnauthorizedException,
   Req,
   Get,
   UseGuards,
@@ -12,7 +11,6 @@ import {
 import { AuthService } from './providers/auth.service';
 import { LoginDto } from './dtos/login.dto';
 import { RegisterDto } from './dtos/register.dto';
-import { UserNext } from '../users/user.entity';
 import { Auth } from './decorators/auth.decorator';
 import { AuthType } from './enums/auth-type';
 import { CookieOptions, Response } from 'express';
@@ -27,14 +25,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @UseGuards(EnsureDefaultCategoriesGuard)
   @HttpCode(200)
   @Auth(AuthType.None)
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ tokens: { accessToken: string; refreshToken: string } }> {
-    const tokens = await this.authService.autherizeUser(
+    const tokens = await this.authService.authorizeUser(
       loginDto.email,
       loginDto.password,
     );

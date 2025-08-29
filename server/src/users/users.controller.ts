@@ -8,7 +8,6 @@ import { Param } from '@nestjs/common';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { AuthType } from 'src/auth/enums/auth-type';
 import { UseInterceptors } from '@nestjs/common';
-
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

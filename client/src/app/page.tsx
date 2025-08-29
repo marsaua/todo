@@ -47,6 +47,20 @@ export default function PublicLayout() {
           >
             Login
           </Button>
+          <Button
+            variant="contained"
+            size="large"
+            fullWidth
+            href="/company_registration"
+            sx={{
+              bgcolor: "secondary.light",
+              "&:hover": {
+                bgcolor: "secondary.dark",
+              },
+            }}
+          >
+            Register Company
+          </Button>
         </Stack>
       </Box>
     </Container>

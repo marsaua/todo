@@ -13,7 +13,7 @@ async function bootstrap() {
   app.enableCors({
     origin: (origin, cb) => {
       const allowlist = [
-        'http://localhost:3001',
+        'http://localhost:3000',
         'https://todo-ki18.vercel.app',
         'https://todo-ki18-git-main-marsauas-projects.vercel.app',
         'https://todo-ki18-2sjbokhzb-marsauas-projects.vercel.app',

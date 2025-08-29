@@ -58,7 +58,10 @@ export class GoogleAuthenticationService implements OnModuleInit {
       // If user id found generate the tokens
       if (user) {
         await this.defaultCategoriesService.ensureForUser(user.id);
-        return await this.generateTokensProvider.generateTokens(user);
+        return await this.generateTokensProvider.generateTokens(
+          user.id,
+          user.email,
+        );
       } else {
         // If not create a new user and generate the tokens
         const newUser = await this.usersService.createGoogleUser({
@@ -69,7 +72,10 @@ export class GoogleAuthenticationService implements OnModuleInit {
         });
         await this.defaultCategoriesService.ensureForUser(newUser.id);
 
-        return await this.generateTokensProvider.generateTokens(newUser);
+        return await this.generateTokensProvider.generateTokens(
+          newUser.id,
+          newUser.email,
+        );
       }
 
       // throw Unauthorised exception if not Authorised

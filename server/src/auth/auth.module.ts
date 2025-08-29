@@ -15,6 +15,7 @@ import { GoogleAuthenticationService } from './social/providers/google-authentic
 import { GoogleAuthenticationController } from './social/google-authentication.controller';
 import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
 import { CategoriesModule } from 'src/categories/categories.module';
+import { CompaniesModule } from 'src/companies/companies.module';
 
 @Module({
   controllers: [AuthController, GoogleAuthenticationController],
@@ -43,6 +44,7 @@ import { CategoriesModule } from 'src/categories/categories.module';
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     forwardRef(() => CategoriesModule),
+    forwardRef(() => CompaniesModule),
   ],
 })
 export class AuthModule {}

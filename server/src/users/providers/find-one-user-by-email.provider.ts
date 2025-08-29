@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  RequestTimeoutException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserNext } from '../user.entity';
@@ -15,18 +11,7 @@ export class FindOneUserByEmailProvider {
   ) {}
 
   async findOneUserByEmail(email: string): Promise<UserNext | null> {
-    let user: UserNext | null;
-    try {
-      user = await this.userRepository.findOne({ where: { email } });
-    } catch (error) {
-      console.log(error);
-      throw new RequestTimeoutException(
-        'Something went wrong. Please try again later.',
-      );
-    }
-    if (!user) {
-      throw new BadRequestException('Such user does not exist');
-    }
+    const user = await this.userRepository.findOne({ where: { email } });
     return user;
   }
 }

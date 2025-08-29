@@ -19,9 +19,15 @@ export class Category {
   })
   @Column({
     type: 'int',
-    nullable: false,
+    nullable: true,
   })
-  userId: number;
+  userId?: number;
+
+  @Column({
+    type: 'int',
+    nullable: true,
+  })
+  companyId?: number;
 
   @Column({
     type: 'varchar',

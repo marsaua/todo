@@ -1,14 +1,8 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { RefreshTokenDto } from '../dtos/refresh-tokens.dto';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 
-interface TokenPayload {
-  sub: string;
-  iat: number;
-  exp: number;
-}
 import { GenerateTokensProvider } from './generate-tokens.provider';
 import { forwardRef } from '@nestjs/common';
 import { UsersService } from 'src/users/providers/users.service';
@@ -40,7 +34,10 @@ export class RefreshTokensProvider {
       const user = await this.usersService.findOneById(Number(payload.sub));
       if (!user) throw new Error('User not found');
 
-      return await this.generateTokensProvider.generateTokens(user);
+      return await this.generateTokensProvider.generateTokens(
+        user.id,
+        user.email,
+      );
     } catch (error) {
       console.error(error);
       throw new UnauthorizedException('Could not refresh tokens');

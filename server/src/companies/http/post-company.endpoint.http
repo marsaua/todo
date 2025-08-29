@@ -1,0 +1,11 @@
+POST http://localhost:4000/companies
+Content-Type: application/json
+{
+    "companyName": "Compan111efewf Name",
+    "email": "emaid1l1@gmail.com",
+    "password": "password",
+    "confirmPassword": "password",
+    "description": "Description",
+    "companyLogo": "Logo"
+}
+    
