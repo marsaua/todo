@@ -61,6 +61,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
         return await this.generateTokensProvider.generateTokens(
           user.id,
           user.email,
+          'USER',
         );
       } else {
         // If not create a new user and generate the tokens
@@ -75,6 +76,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
         return await this.generateTokensProvider.generateTokens(
           newUser.id,
           newUser.email,
+          'USER',
         );
       }
 

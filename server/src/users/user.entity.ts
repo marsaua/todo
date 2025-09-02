@@ -50,6 +50,13 @@ export class UserNext {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Todo, (todo) => todo.author)
+  @OneToMany(() => Todo, (todo) => todo.authorCompany)
   todos?: Todo[];
+
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    length: 255,
+  })
+  role: 'USER';
 }

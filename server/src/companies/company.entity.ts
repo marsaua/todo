@@ -3,7 +3,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Todo } from 'src/todos/todo.entity';
 
 @Entity()
 export default class Company {
@@ -42,4 +44,7 @@ export default class Company {
     length: 255,
   })
   companyLogo?: string;
+
+  @OneToMany(() => Todo, (todo) => todo.authorCompany)
+  todos?: Todo[];
 }

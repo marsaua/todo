@@ -10,6 +10,14 @@ import { GenerateTokensProvider } from './generate-tokens.provider';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
 import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
 import { CompaniesService } from 'src/companies/providers/companies.service';
+import Company from 'src/companies/company.entity';
+import { UserNext } from 'src/users/user.entity';
+
+type Role = 'USER' | 'COMPANY';
+
+function isCompany(a: UserNext | Company): a is Company {
+  return (a as Company).companyName !== undefined;
+}
 @Injectable()
 export class AuthService {
   constructor(
@@ -39,7 +47,8 @@ export class AuthService {
     if (!account) {
       throw new BadRequestException('User not found');
     }
-    console.log(account);
+    const role: Role = isCompany(account) ? 'COMPANY' : 'USER';
+
     const isPasswordMatched = await this.hashingProvider.comparePassword(
       password,
       account.password!,
@@ -53,6 +62,7 @@ export class AuthService {
     const tokens = await this.generateTokensProvider.generateTokens(
       account.id,
       account.email,
+      role,
     );
     return tokens;
   }
@@ -73,7 +83,9 @@ export class AuthService {
     const tokens = await this.generateTokensProvider.generateTokens(
       user.id,
       user.email,
+      'USER',
     );
+    console.log(tokens);
     return tokens;
   }
 

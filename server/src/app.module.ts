@@ -45,7 +45,7 @@ const ENV = process.env.NODE_ENV;
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        // entities: [Todo, Category, UserNext, Company],
+        entities: [Todo, Category, UserNext, Company],
         synchronize: true,
         url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,

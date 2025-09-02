@@ -45,6 +45,7 @@ export class CreateCompanyProvider {
       const tokens = await this.generateTokensProvider.generateTokens(
         newCompany.id,
         newCompany.email,
+        'COMPANY',
       );
       return tokens;
     } catch (error) {

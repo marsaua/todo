@@ -6,6 +6,8 @@ export const ActiveUser = createParamDecorator(
   (field: keyof ActiveUserType | undefined, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
     const user: ActiveUserType = request[REQUEST_USER_KEY];
+    const role: string = user.role; // 'USER' | 'COMPANY'
+
     return field ? user?.[field] : user;
   },
 );

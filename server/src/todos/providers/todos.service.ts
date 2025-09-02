@@ -40,7 +40,7 @@ export class TodosService {
     let todos: Paginated<Todo>;
     console.log(postQuery);
     try {
-      const where: FindOptionsWhere<Todo> = { authorId: user.sub };
+      const where: FindOptionsWhere<Todo> = { authorUserId: user.sub };
 
       if (postQuery.categoryId) {
         where.categoryId = postQuery.categoryId;
@@ -50,7 +50,7 @@ export class TodosService {
         this.todoRepository,
         {
           where,
-          relations: ['category', 'author'],
+          relations: ['category', 'authorUser', 'authorCompany'],
           order: { createdAt: 'DESC' },
         },
       );
@@ -88,7 +88,7 @@ export class TodosService {
     const newTodo = this.todoRepository.create({
       ...createTodoDto,
       categoryId: category.id,
-      authorId: author.id,
+      authorUserId: author.id,
     });
     try {
       await this.todoRepository.save(newTodo);

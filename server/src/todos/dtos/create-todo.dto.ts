@@ -1,8 +1,6 @@
 import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { ManyToOne, JoinColumn } from 'typeorm';
 import { IsNumber } from 'class-validator';
-import { Category } from 'src/categories/category.entity';
 
 export class CreateTodoDto {
   @ApiProperty({

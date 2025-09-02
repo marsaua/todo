@@ -42,6 +42,7 @@ export class CreateUserProvider {
       );
       user = this.userRepository.create({
         ...createUserDto,
+        role: 'USER',
         password,
       });
     } catch (error) {
