@@ -1,0 +1,7 @@
+POST http://localhost:4000/invitation
+Content-Type: application/json
+{
+    "email": "emaid1l1@gmail.com",
+    "companyId": 1,
+    "ttlDays": 7
+}

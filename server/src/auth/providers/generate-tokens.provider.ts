@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class GenerateTokensProvider {
@@ -55,3 +56,5 @@ export class GenerateTokensProvider {
     return { accessToken, refreshToken };
   }
 }
+export const hashToken = (t: string) =>
+  createHash('sha256').update(t).digest('hex');

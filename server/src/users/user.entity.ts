@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Todo } from 'src/todos/todo.entity';
 import { Exclude } from 'class-transformer';
+import { Subscription } from 'rxjs';
 
 @Entity()
 export class UserNext {

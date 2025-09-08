@@ -20,6 +20,7 @@ import DeleteCategoryModal from "@/components/modals/DeleteCategoryModal";
 import { useState } from "react";
 import LogoutButton from "./buttons/LogoutButton";
 import { useRouter } from "next/navigation";
+import InvitationModal from "./modals/InvitationModal";
 
 export default function AsideMenu({
   children,
@@ -40,12 +41,20 @@ export default function AsideMenu({
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [id, setId] = useState(0);
+
+  const [openInvitation, setOpenInvitation] = useState(false);
+
   const router = useRouter();
 
   const handleCloseDelete = () => {
     setOpenDelete(false);
     setId(0);
   };
+
+  const handleCloseInvitation = () => {
+    setOpenInvitation(false);
+  };
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -154,6 +163,12 @@ export default function AsideMenu({
               }}
             >
               {drawer}
+              <Button
+                variant="outlined"
+                onClick={() => setOpenInvitation(true)}
+              >
+                Invite the user
+              </Button>
             </Drawer>
           ) : (
             <Drawer
@@ -169,6 +184,12 @@ export default function AsideMenu({
               }}
             >
               {drawer}
+              <Button
+                variant="outlined"
+                onClick={() => setOpenInvitation(true)}
+              >
+                Invite the user
+              </Button>
             </Drawer>
           )}
         </Box>
@@ -189,6 +210,10 @@ export default function AsideMenu({
         open={openDelete}
         onClose={handleCloseDelete}
         id={id}
+      />
+      <InvitationModal
+        open={openInvitation}
+        handleClose={handleCloseInvitation}
       />
     </>
   );

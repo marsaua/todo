@@ -27,6 +27,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   @Auth(AuthType.None)
+  @UseGuards(EnsureDefaultCategoriesGuard)
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) res: Response,
@@ -56,7 +57,7 @@ export class AuthController {
   @Post('register')
   @HttpCode(201)
   @Auth(AuthType.None)
-  @UseGuards(EnsureDefaultCategoriesGuard)
+  // @UseGuards(EnsureDefaultCategoriesGuard)
   async register(
     @Body() registerDto: RegisterDto,
     @Res({ passthrough: true }) res: Response,

@@ -25,6 +25,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { DataResponceInterceptor } from './common/interceptors/data-responce/data-responce.interceptor';
 import { MailModule } from './mail/mail.module';
 import { CompaniesModule } from './companies/companies.module';
+import { InvitationModule } from './invitation/invitation.module';
 import Company from './companies/company.entity';
 
 const ENV = process.env.NODE_ENV;
@@ -62,6 +63,7 @@ const ENV = process.env.NODE_ENV;
     AuthModule,
     MailModule,
     CompaniesModule,
+    InvitationModule,
   ],
   controllers: [AppController],
   providers: [

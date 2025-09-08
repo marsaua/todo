@@ -53,7 +53,6 @@ export class AuthService {
       password,
       account.password!,
     );
-    await this.defaultCategoriesService.ensureForUser(account.id);
 
     if (!isPasswordMatched) {
       throw new BadRequestException('Invalid credentials');
@@ -64,6 +63,9 @@ export class AuthService {
       account.email,
       role,
     );
+    if (role === 'USER') {
+      await this.defaultCategoriesService.ensureForUser(account.id);
+    }
     return tokens;
   }
 
@@ -79,13 +81,12 @@ export class AuthService {
       name: name || '',
       surname: surname || '',
     });
-    await this.defaultCategoriesService.ensureForUser(user.id);
     const tokens = await this.generateTokensProvider.generateTokens(
       user.id,
       user.email,
       'USER',
     );
-    console.log(tokens);
+    await this.defaultCategoriesService.ensureForUser(user.id);
     return tokens;
   }
 

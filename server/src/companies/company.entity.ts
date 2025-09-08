@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Todo } from 'src/todos/todo.entity';
+import { Invitation } from 'src/invitation/invitation.entity';
 
 @Entity()
 export default class Company {
@@ -47,4 +48,7 @@ export default class Company {
 
   @OneToMany(() => Todo, (todo) => todo.authorCompany)
   todos?: Todo[];
+
+  @OneToMany(() => Invitation, (invitation) => invitation.company)
+  invitations?: Invitation[];
 }

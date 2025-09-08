@@ -10,7 +10,8 @@ export class EnsureDefaultCategoriesGuard implements CanActivate {
     const userId: number | undefined = req.user?.sub;
 
     if (!userId) return true;
-
+    console.log(req);
+    if (req.user.role === 'COMPANY') return true; // company doesn't have default categories
     await this.defaults.ensureForUser(userId);
     return true;
   }

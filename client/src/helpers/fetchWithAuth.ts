@@ -1,41 +1,98 @@
 "use client";
 
-export async function fetchWithAuth<T>(
-  method: string,
+type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/+$/, "");
+const absUrl = (path: string) =>
+  /^https?:\/\//i.test(path)
+    ? path
+    : `${API_BASE}${path.startsWith("/") ? path : `/${path}`}`;
+
+export class ApiError<T = unknown> extends Error {
+  status: number;
+  details?: T;
+  constructor(message: string, status: number, details?: T) {
+    super(message);
+    this.status = status;
+    this.details = details;
+  }
+}
+
+async function parseRes<T>(res: Response): Promise<T | null> {
+  const ct = res.headers.get("content-type") || "";
+  if (ct.includes("application/json")) {
+    try {
+      return (await res.json()) as T;
+    } catch {}
+  }
+  if (res.status === 204) return null;
+  try {
+    return (await res.text()) as unknown as T;
+  } catch {}
+  return null;
+}
+
+export async function fetchWithAuth<T = unknown>(
+  method: HttpMethod,
   url: string,
-  body?: any
-): Promise<T> {
-  const API_URL = process.env.NEXT_PUBLIC_API_URL;
-  const makeRequest = async (): Promise<Response> => {
-    return await fetch(`${API_URL}/${url}`, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      ...(body && { body: JSON.stringify(body) }),
-    });
+  body?: unknown
+): Promise<T | null> {
+  const init: RequestInit = {
+    method,
+    credentials: "include",
+    headers: {
+      ...(body && !(body instanceof FormData)
+        ? { "Content-Type": "application/json" }
+        : {}),
+    },
+    body:
+      body instanceof FormData
+        ? body
+        : body != null
+        ? JSON.stringify(body)
+        : undefined,
   };
 
-  let res = await makeRequest();
+  const makeReq = () => fetch(absUrl(url), init);
 
+  let res: Response;
+  try {
+    res = await makeReq();
+  } catch (e: unknown) {
+    throw new ApiError(e instanceof Error ? e.message : "Network error", 0);
+  }
+
+  // один автопробний refresh
   if (res.status === 401) {
     try {
-      await fetch(`${API_URL}/auth/refresh-tokens`, {
+      const r = await fetch(absUrl("/auth/refresh-tokens"), {
         method: "POST",
         credentials: "include",
       });
-    } catch (error) {
-      console.error("Refresh failed:", error);
+      if (r.ok) res = await makeReq();
+    } catch {
+      /* ignore */
     }
+  }
 
-    res = await makeRequest();
+  if (res.status === 401) {
+    const errBody = await parseRes<{ message?: string; error?: string }>(res);
+    throw new ApiError(
+      (errBody && (errBody.message || errBody.error)) || "Unauthorized",
+      401,
+      errBody
+    );
   }
 
   if (!res.ok) {
-    window.location.replace("/authorization");
-    throw new Error("Unauthorized");
+    const errBody = await parseRes<{ message?: string; error?: string }>(res);
+    throw new ApiError(
+      (errBody && (errBody.message || errBody.error)) ||
+        `HTTP ${res.status} ${res.statusText}`,
+      res.status,
+      errBody
+    );
   }
 
-  return res.json();
+  return parseRes<T>(res); // T | null
 }
