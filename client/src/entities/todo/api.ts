@@ -25,9 +25,22 @@ export type TodosResponse = {
 };
 
 export const getTodos = (page: number, limit: number, categoryId?: number) => {
+  const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
   return fetchWithAuth<TodosResponse>(
     "GET",
-    `todos?page=${page}&limit=${limit}&categoryId=${categoryId}`
+    `todos?page=${page}&limit=${limit}${categoryQuery}`
+  );
+};
+
+export const getCompanyTodos = (
+  page: number,
+  limit: number,
+  companyId?: number
+) => {
+  const companyQuery = companyId ? `&companyId=${companyId}` : "";
+  return fetchWithAuth<TodosResponse>(
+    "GET",
+    `todos/companys-todos?page=${page}&limit=${limit}${companyQuery}`
   );
 };
 

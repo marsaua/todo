@@ -12,3 +12,7 @@ export const loginUser = (data: { email: string; password: string }) =>
   fetchPublic("POST", "auth/login", data);
 
 export const logoutUser = () => fetchWithAuth("POST", "auth/logout");
+
+export const findCurrentUser = () => fetchWithAuth("GET", "users/currentUser");
+
+export const findUserById = () => fetchWithAuth("GET", `users/companys-todos`);

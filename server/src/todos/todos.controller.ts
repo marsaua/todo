@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  BadRequestException,
 } from '@nestjs/common';
 import { TodosService } from './providers/todos.service';
 import { CreateTodoDto } from './dtos/create-todo.dto';
@@ -40,7 +41,26 @@ export class TodosController {
     @Query() query: GetTodosDto,
     @ActiveUser() user: ActiveUserType,
   ): Promise<Paginated<Todo>> {
-    return this.todosService.findAll(query, user);
+    const todos = await this.todosService.findAll(query, user);
+    if (!todos) {
+      throw new BadRequestException(
+        'Todos not found. Please refresh the page.',
+      );
+    }
+    return todos;
+  }
+
+  @Get('companys-todos')
+  public async getCompanyTodos(
+    @Query() query: GetTodosDto,
+  ): Promise<Paginated<Todo>> {
+    const todos = await this.todosService.getCompanyTodos(query);
+    if (!todos) {
+      throw new BadRequestException(
+        'Todos not found. Please refresh the page.',
+      );
+    }
+    return todos;
   }
 
   @Post()

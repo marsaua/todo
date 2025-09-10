@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Todo } from 'src/todos/todo.entity';
 import { Exclude } from 'class-transformer';
-import { Subscription } from 'rxjs';
+import { Subscription } from 'src/invitation/subscription.entity';
 
 @Entity()
 export class UserNext {
@@ -53,6 +53,9 @@ export class UserNext {
 
   @OneToMany(() => Todo, (todo) => todo.authorCompany)
   todos?: Todo[];
+
+  @OneToMany(() => Subscription, (s) => s.user)
+  subscriptions?: Subscription[];
 
   @Column({
     type: 'varchar',

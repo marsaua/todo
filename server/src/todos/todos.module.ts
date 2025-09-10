@@ -7,10 +7,11 @@ import { Category } from '../categories/category.entity';
 import { CategoriesModule } from '../categories/categories.module';
 import { PaginationModule } from '../common/pagination/pagination.module';
 import { UsersModule } from '../users/users.module';
+import { Company } from 'src/companies/company.entity';
 @Module({
   imports: [
     PaginationModule,
-    TypeOrmModule.forFeature([Todo, Category]),
+    TypeOrmModule.forFeature([Todo, Category, Company]),
     forwardRef(() => CategoriesModule),
     forwardRef(() => UsersModule),
   ],

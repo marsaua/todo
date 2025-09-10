@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import Company from '../company.entity';
+import { Company } from '../company.entity';
 import { Repository } from 'typeorm';
 import { CreateCompanyDto } from '../dtos/create-company.dto';
 import { HashingProvider } from 'src/auth/providers/hashing.provider';

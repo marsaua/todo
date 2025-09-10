@@ -3,7 +3,7 @@ import {
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
-import { Todo } from '../todo.entity';
+import { AuthorType, Todo } from '../todo.entity';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateTodoDto } from '../dtos/create-todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -18,6 +18,7 @@ import { UsersService } from 'src/users/providers/users.service';
 import { Inject } from '@nestjs/common';
 import { forwardRef } from '@nestjs/common';
 import { ActiveUserType } from 'src/auth/enums/active-user-type';
+import { Company } from 'src/companies/company.entity';
 
 @Injectable()
 export class TodosService {
@@ -25,6 +26,8 @@ export class TodosService {
     private readonly categoriesService: CategoriesService,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(Company)
+    private readonly companyRepository: Repository<Company>,
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
     //Inject pagination provider
@@ -36,11 +39,66 @@ export class TodosService {
   public async findAll(
     postQuery: GetTodosDto,
     user: ActiveUserType,
-  ): Promise<Paginated<Todo>> {
-    let todos: Paginated<Todo>;
+  ): Promise<Paginated<Todo> | null> {
+    let todos: Paginated<Todo> | null = null;
     console.log(postQuery);
+    if (user.role === 'USER') {
+      try {
+        const where: FindOptionsWhere<Todo> = { authorUserId: user.sub };
+
+        if (postQuery.categoryId) {
+          where.categoryId = postQuery.categoryId;
+        }
+        todos = await this.paginationProvider.paginateQuery(
+          postQuery,
+          this.todoRepository,
+          {
+            where,
+            relations: ['category', 'authorUser', 'authorCompany'],
+            order: { createdAt: 'DESC' },
+          },
+        );
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException(
+          'Something went wrong. Please try again later.',
+        );
+      }
+    } else if (user.role === 'COMPANY') {
+      try {
+        const where: FindOptionsWhere<Todo> = { authorCompanyId: user.sub };
+
+        if (postQuery.categoryId) {
+          where.categoryId = postQuery.categoryId;
+        }
+        todos = await this.paginationProvider.paginateQuery(
+          postQuery,
+          this.todoRepository,
+          {
+            where,
+            relations: ['category', 'authorUser', 'authorCompany'],
+            order: { createdAt: 'DESC' },
+          },
+        );
+      } catch (error) {
+        console.log(error);
+        throw new InternalServerErrorException(
+          'Something went wrong. Please try again later.',
+        );
+      }
+    }
+    return todos;
+  }
+
+  public async getCompanyTodos(postQuery: GetTodosDto) {
+    let todos: Paginated<Todo> | null = null;
     try {
-      const where: FindOptionsWhere<Todo> = { authorUserId: user.sub };
+      if (!postQuery.companyId) {
+        throw new BadRequestException('Company ID is required');
+      }
+      const where: FindOptionsWhere<Todo> = {
+        authorCompanyId: postQuery.companyId,
+      };
 
       if (postQuery.categoryId) {
         where.categoryId = postQuery.categoryId;
@@ -63,41 +121,48 @@ export class TodosService {
     return todos;
   }
 
-  public async createTodo(createTodoDto: CreateTodoDto, user: ActiveUserType) {
-    const author: UserNext | null = await this.userService.findOneById(
-      user.sub,
+  public async createTodo(
+    createTodoDto: CreateTodoDto,
+    active: ActiveUserType,
+  ) {
+    // 1) категорія
+    const category = await this.categoriesService.findCategoryById(
+      createTodoDto.categoryId,
     );
-    if (!author) {
-      throw new BadRequestException('User not found');
-    }
-    //find category by id
-    let category: Category | null;
-    try {
-      category = await this.categoriesService.findCategoryById(
-        createTodoDto.categoryId,
-      );
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Something went wrong. Please try again later.',
-      );
-    }
-    if (!category) {
-      throw new BadRequestException('Category not found');
-    }
-    const newTodo = this.todoRepository.create({
-      ...createTodoDto,
+    if (!category) throw new BadRequestException('Category not found');
+
+    let payload: Partial<Todo> = {
+      title: createTodoDto.title,
+      content: createTodoDto.content,
       categoryId: category.id,
-      authorUserId: author.id,
-    });
-    try {
-      await this.todoRepository.save(newTodo);
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'Something went wrong. Please try again later.',
-      );
+    };
+
+    if (active.role === 'USER') {
+      // автор — користувач
+      payload = {
+        ...payload,
+        authorType: AuthorType.USER,
+        authorUserId: active.sub,
+        authorCompanyId: null,
+      };
+    } else if (active.role === 'COMPANY') {
+      const company = await this.companyRepository.findOneBy({
+        id: active.sub,
+      });
+      if (!company) throw new BadRequestException('Company not found');
+
+      payload = {
+        ...payload,
+        authorType: AuthorType.COMPANY,
+        authorCompanyId: active.sub,
+        authorUserId: null,
+      };
+    } else {
+      throw new BadRequestException('Unknown author role');
     }
+
+    const newTodo = this.todoRepository.create(payload);
+    await this.todoRepository.save(newTodo);
     return newTodo;
   }
 

@@ -26,7 +26,9 @@ import { DataResponceInterceptor } from './common/interceptors/data-responce/dat
 import { MailModule } from './mail/mail.module';
 import { CompaniesModule } from './companies/companies.module';
 import { InvitationModule } from './invitation/invitation.module';
-import Company from './companies/company.entity';
+import { Company } from './companies/company.entity';
+import { Invitation } from './invitation/invitation.entity';
+import { Subscription } from './invitation/subscription.entity';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -46,7 +48,7 @@ const ENV = process.env.NODE_ENV;
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
-        entities: [Todo, Category, UserNext, Company],
+        entities: [Todo, Category, UserNext, Company, Invitation, Subscription],
         synchronize: true,
         url: configService.get<string>('DATABASE_URL'),
         autoLoadEntities: true,

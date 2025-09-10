@@ -14,6 +14,7 @@ export default function ToDoItem({
       key={card.id}
       sx={{
         maxWidth: "400px",
+        minHeight: "180px",
         minWidth: "250px",
         backgroundColor: categories?.find(
           (category: any) => category.id === card.categoryId

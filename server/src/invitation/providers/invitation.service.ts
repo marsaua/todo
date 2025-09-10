@@ -11,8 +11,9 @@ import { MailService } from 'src/mail/providers/mail.service';
 import { ActiveUserType } from 'src/auth/enums/active-user-type';
 import { InvitationDto } from '../dtos/invitation.dto';
 import { randomBytes } from 'crypto';
-import Company from 'src/companies/company.entity';
+import { Company } from 'src/companies/company.entity';
 import { Subscription } from '../subscription.entity';
+import { UserNext } from 'src/users/user.entity';
 
 @Injectable()
 export class InvitationService {
@@ -83,12 +84,12 @@ export class InvitationService {
         throw new BadRequestException('Invite expired');
       await subRepo.upsert(
         {
-          companyId: inv.companyId,
-          userId: currentUserId,
+          company: { id: inv.company.id } as DeepPartial<Company>,
+          user: { id: currentUserId } as DeepPartial<UserNext>,
           usedAt: new Date(),
           usedByUserId: currentUserId,
         },
-        ['companyId', 'userId'],
+        ['company', 'user'],
       );
 
       await repo.update(inv.id, {

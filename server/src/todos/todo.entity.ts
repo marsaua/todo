@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Category } from 'src/categories/category.entity';
 import { UserNext } from 'src/users/user.entity';
-import Company from 'src/companies/company.entity';
+import { Company } from 'src/companies/company.entity';
 
 export enum AuthorType {
   USER = 'USER',
@@ -32,7 +32,7 @@ export class Todo {
   @CreateDateColumn()
   createdAt: Date;
 
-  @ManyToOne(() => Category)
+  @ManyToOne(() => Category, (c) => c.todos, { nullable: false })
   @JoinColumn({ name: 'categoryId' })
   category: Category;
 

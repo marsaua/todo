@@ -5,7 +5,7 @@ import { CreateCompanyProvider } from './providers/create-company.provider';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { forwardRef } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
-import Company from './company.entity';
+import { Company } from './company.entity';
 
 @Module({
   controllers: [CompaniesController],

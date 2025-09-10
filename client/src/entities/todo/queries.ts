@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { addTodo, deleteTodo, getTodos, updateTodo } from "./api";
+import {
+  addTodo,
+  deleteTodo,
+  getCompanyTodos,
+  getTodos,
+  updateTodo,
+} from "./api";
 
 export const qk = {
   todos: {
@@ -63,5 +69,24 @@ export function useDeleteTodoMutation() {
     mutationFn: (id: number) => deleteTodo(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.todos.listRoot() }),
     onError: (error) => error,
+  });
+}
+
+export function useCompanyTodosQuery({
+  page,
+  limit,
+  companyId,
+}: {
+  page: number;
+  limit: number;
+  companyId?: number;
+}) {
+  return useQuery({
+    queryKey: qk.todos.list(page, limit, companyId),
+    queryFn: () => getCompanyTodos(page, limit, companyId),
+    placeholderData: (prev) => prev,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    enabled: !!companyId,
   });
 }

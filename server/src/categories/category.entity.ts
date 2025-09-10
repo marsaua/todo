@@ -1,6 +1,7 @@
-import { Entity, Unique } from 'typeorm';
+import { Entity, OneToMany, Unique } from 'typeorm';
 import { PrimaryGeneratedColumn } from 'typeorm';
 import { Column } from 'typeorm';
+import { Todo } from 'src/todos/todo.entity';
 @Entity()
 @Unique(['userId', 'title'])
 export class Category {
@@ -28,6 +29,9 @@ export class Category {
     nullable: true,
   })
   companyId?: number;
+
+  @OneToMany(() => Todo, (todo) => todo.category)
+  todos: Todo[];
 
   @Column({
     type: 'varchar',

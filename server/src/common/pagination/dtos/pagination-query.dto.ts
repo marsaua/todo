@@ -22,7 +22,8 @@ export class PaginationQueryDto {
   //   },
   //   { toClassOnly: true },
   // )
-  // @IsInt()
-  // @Min(0)
-  // categoryId?: number;
+  @IsInt()
+  @IsOptional()
+  @Min(0)
+  companyId?: number;
 }

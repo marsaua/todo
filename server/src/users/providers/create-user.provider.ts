@@ -44,6 +44,7 @@ export class CreateUserProvider {
         ...createUserDto,
         role: 'USER',
         password,
+        subscriptions: [],
       });
     } catch (error) {
       console.log(error);

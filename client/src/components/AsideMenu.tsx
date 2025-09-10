@@ -25,6 +25,7 @@ import InvitationModal from "./modals/InvitationModal";
 export default function AsideMenu({
   children,
   categories,
+  userName,
 }: {
   children: React.ReactNode;
   categories:
@@ -34,6 +35,7 @@ export default function AsideMenu({
         id: number;
       }[]
     | null;
+  userName: string;
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -72,6 +74,9 @@ export default function AsideMenu({
         </ListItem>
       </List>
       <Divider />
+      <Typography sx={{ p: 2, mt: 2, fontWeight: "bold" }}>
+        Hello, {userName}
+      </Typography>
       <Typography sx={{ p: 2, mt: 2, fontWeight: "bold" }}>Tasks</Typography>
       <List>
         <ListItem>

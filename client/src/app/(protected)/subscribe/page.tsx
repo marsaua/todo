@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRedeemInvitationMutation } from "@/entities/invitation/query";
 import { ApiError } from "@/helpers/fetchWithAuth";
+import { useNotification } from "@/context/NotificationContext";
 
 export default function SubscribePage() {
   const router = useRouter();

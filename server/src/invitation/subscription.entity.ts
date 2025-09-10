@@ -3,27 +3,48 @@ import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
   Entity,
-  Unique,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  RelationId,
 } from 'typeorm';
+import { Company } from '../companies/company.entity';
+import { UserNext } from '../users/user.entity';
 
 @Entity('subscription')
-@Unique(['companyId', 'userId'])
+@Index(['company', 'user'], { unique: true })
 export class Subscription {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  // --- company ---
+  @ManyToOne(() => Company, (c) => c.subscriptions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'companyId' })
+  company: Company;
+
+  @RelationId((s: Subscription) => s.company)
   companyId: number;
 
-  @Column()
+  // --- user ---
+  @ManyToOne(() => UserNext, (u) => u.subscriptions, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'userId' })
+  user: UserNext;
+
+  @RelationId((s: Subscription) => s.user)
   userId: number;
 
-  @Column()
+  @Column({ type: 'timestamptz', nullable: true })
   usedAt?: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'int', nullable: true })
   usedByUserId?: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

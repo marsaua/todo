@@ -1,5 +1,5 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { registerUser, loginUser, logoutUser } from "./api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { registerUser, loginUser, logoutUser, findCurrentUser } from "./api";
 
 const qk = {
   users: {
@@ -36,5 +36,15 @@ export function useLogoutUserMutation() {
     mutationFn: () => logoutUser(),
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.users.root() }),
     onError: (error) => error,
+  });
+}
+
+export function useCurrentUser() {
+  return useQuery({
+    queryFn: () => findCurrentUser(),
+    queryKey: qk.users.root(),
+    retry: 1,
+    refetchOnWindowFocus: false,
+    placeholderData: (prev) => prev,
   });
 }

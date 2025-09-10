@@ -9,7 +9,7 @@ import {
   JoinColumn,
   RelationId,
 } from 'typeorm';
-import Company from '../companies/company.entity';
+import { Company } from '../companies/company.entity';
 
 @Entity()
 export class Invitation {

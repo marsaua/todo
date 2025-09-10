@@ -10,7 +10,7 @@ import { GenerateTokensProvider } from './generate-tokens.provider';
 import { RefreshTokensProvider } from './refresh-tokens.provider';
 import { DefaultCategoriesService } from 'src/categories/providers/default-categories.service';
 import { CompaniesService } from 'src/companies/providers/companies.service';
-import Company from 'src/companies/company.entity';
+import { Company } from 'src/companies/company.entity';
 import { UserNext } from 'src/users/user.entity';
 
 type Role = 'USER' | 'COMPANY';

@@ -17,6 +17,7 @@ import { FindOneByGoogleIdProveder } from './providers/find-one-by-google-id.pro
 import { CreateGoogleUserProvider } from './providers/create-google-user.provider';
 import { Category } from 'src/categories/category.entity';
 import { CategoriesModule } from 'src/categories/categories.module';
+import { Company } from 'src/companies/company.entity';
 @Module({
   controllers: [UsersController],
   providers: [
@@ -32,7 +33,7 @@ import { CategoriesModule } from 'src/categories/categories.module';
   ],
   exports: [UsersService],
   imports: [
-    TypeOrmModule.forFeature([UserNext, Category]),
+    TypeOrmModule.forFeature([UserNext, Category, Company]),
     ConfigModule.forFeature(profileConfig),
     forwardRef(() => AuthModule),
     forwardRef(() => CategoriesModule),
