@@ -36,8 +36,6 @@ export class InvitationService {
   }
 
   async createInvitation(dto: InvitationDto, user: ActiveUserType) {
-    console.log(user);
-    console.log(dto);
     if (user.role !== 'COMPANY') {
       throw new ForbiddenException('Only company can invite');
     }
@@ -64,8 +62,25 @@ export class InvitationService {
     });
     await this.repo.save(invitation);
 
-    await this.mail.sendInvitationEmail(dto.email, user, invitation);
-
+    try {
+      const info = await this.mail.sendInvitationEmail(
+        dto.email,
+        user,
+        invitation,
+      );
+      console.log('[INVITE:MAIL] sent', {
+        to: dto.email,
+        companyId: user.sub,
+        token: invitation.token.slice(0, 6) + '…',
+        messageId: (info as any)?.messageId,
+      });
+    } catch (e) {
+      console.error('[INVITE:MAIL] FAILED', {
+        to: dto.email,
+        companyId: user.sub,
+        error: e?.message || e,
+      });
+    }
     return { ok: true };
   }
 
