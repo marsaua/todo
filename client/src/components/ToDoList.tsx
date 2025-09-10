@@ -40,7 +40,7 @@ export default function ToDoList({
     isError: categoriesError,
   } = useCategoriesQuery();
   const { data: currentUser } = useCurrentUser();
-
+  console.log(categories?.data);
   const router = useRouter();
   const user = currentUser?.data;
 
@@ -117,7 +117,12 @@ export default function ToDoList({
           }}
         >
           {todos?.data?.data?.map((card: any) => (
-            <ToDoItem key={card.id} card={card} categories={categories?.data} />
+            <ToDoItem
+              key={card.id}
+              card={card}
+              categories={categories}
+              currentUser={currentUser}
+            />
           ))}
           <AddTodoItem />
         </Box>
@@ -128,7 +133,7 @@ export default function ToDoList({
         />
       </CustomTabPanel>
       {user?.subscriptions?.map((sub: any) => (
-        <CustomTabPanel value={value} index={sub.companyId}>
+        <CustomTabPanel value={value} index={sub.companyId} key={sub.id}>
           <Box
             sx={{
               display: "grid",
@@ -141,7 +146,8 @@ export default function ToDoList({
               <ToDoItem
                 key={card.id}
                 card={card}
-                categories={categories?.data}
+                categories={categories}
+                currentUser={currentUser}
               />
             ))}
             <AddTodoItem />

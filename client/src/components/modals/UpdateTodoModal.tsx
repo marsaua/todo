@@ -104,7 +104,7 @@ export default function UpdateTodoModal({
               label="Category"
               onChange={(e) => setCategoryId(e.target.value)}
             >
-              {categories?.map((item: any) => (
+              {categories?.data.map((item: any) => (
                 <MenuItem key={item.id} value={item.id}>
                   {item.title}
                 </MenuItem>

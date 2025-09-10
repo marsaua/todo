@@ -5,10 +5,14 @@ import DeleteTodoButton from "./buttons/DeleteTodoButton";
 export default function ToDoItem({
   card,
   categories,
+  currentUser,
 }: {
   card: any;
   categories: any;
+  currentUser: any;
 }) {
+  console.log(card);
+  console.log(currentUser);
   return (
     <Card
       key={card.id}
@@ -16,9 +20,7 @@ export default function ToDoItem({
         maxWidth: "400px",
         minHeight: "180px",
         minWidth: "250px",
-        backgroundColor: categories?.find(
-          (category: any) => category.id === card.categoryId
-        )?.color,
+        backgroundColor: card?.category?.color,
       }}
     >
       <CardContent>
@@ -26,17 +28,20 @@ export default function ToDoItem({
         <Typography variant="body1">{card.content}</Typography>
         <Typography variant="body1">{card.category?.title}</Typography>
       </CardContent>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          gap: 2,
-          marginBottom: 2,
-        }}
-      >
-        <UpdateTodoButton card={card} categories={categories} />
-        <DeleteTodoButton card={card} />
-      </Box>
+      {(card.authorCompanyId === currentUser?.data?.id ||
+        card.authorUserId === currentUser?.data?.id) && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            gap: 2,
+            marginBottom: 2,
+          }}
+        >
+          <UpdateTodoButton card={card} categories={categories} />
+          <DeleteTodoButton card={card} />
+        </Box>
+      )}
     </Card>
   );
 }
