@@ -17,7 +17,7 @@ export class MailService {
       context: {
         name: user.name,
         email: user.email,
-        loinUrl: `${process.env.FRONTEND_URL}/home`,
+        loginUrl: `${process.env.FRONTEND_URL}/home`,
       },
     });
   }
@@ -35,7 +35,7 @@ export class MailService {
       context: {
         name: email,
         email: email,
-        loinUrl: `${process.env.FRONTEND_URL}/subscribe?token=${invitation.token}`,
+        loginUrl: `${process.env.FRONTEND_URL}/subscribe?token=${invitation.token}`,
       },
     });
   }
