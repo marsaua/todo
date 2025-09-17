@@ -26,6 +26,7 @@ export default function AsideMenu({
   children,
   categories,
   userName,
+  role,
 }: {
   children: React.ReactNode;
   categories:
@@ -36,6 +37,7 @@ export default function AsideMenu({
       }[]
     | null;
   userName: string;
+  role: "USER" | "COMPANY" | "";
 }) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -168,12 +170,14 @@ export default function AsideMenu({
               }}
             >
               {drawer}
-              <Button
-                variant="outlined"
-                onClick={() => setOpenInvitation(true)}
-              >
-                Invite the user
-              </Button>
+              {(role === "COMPANY" || !role) && (
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenInvitation(true)}
+                >
+                  Invite the user
+                </Button>
+              )}
             </Drawer>
           ) : (
             <Drawer
@@ -189,12 +193,14 @@ export default function AsideMenu({
               }}
             >
               {drawer}
-              <Button
-                variant="outlined"
-                onClick={() => setOpenInvitation(true)}
-              >
-                Invite the user
-              </Button>
+              {(role === "COMPANY" || !role) && (
+                <Button
+                  variant="outlined"
+                  onClick={() => setOpenInvitation(true)}
+                >
+                  Invite the user
+                </Button>
+              )}
             </Drawer>
           )}
         </Box>

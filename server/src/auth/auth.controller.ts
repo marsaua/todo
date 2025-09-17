@@ -55,8 +55,8 @@ export class AuthController {
   }
 
   @Post('register')
-  @HttpCode(201)
   @Auth(AuthType.None)
+  @HttpCode(201)
   // @UseGuards(EnsureDefaultCategoriesGuard)
   async register(
     @Body() registerDto: RegisterDto,

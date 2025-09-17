@@ -3,4 +3,5 @@ export interface GoogleUser {
   firstName?: string | undefined;
   lastName?: string | undefined;
   googleId: string;
+  role: string;
 }

@@ -35,7 +35,7 @@ export default function GoogleAuthButton() {
     console.error("Google Login Failed");
   };
   return (
-    <GoogleOAuthProvider clientId="900586271923-jckh7t2gerib3fliqrsalsj98dec33mr.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId="927952491482-4ult2n497ik8h9kpeekabijtdgsf2h0m.apps.googleusercontent.com">
       <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
     </GoogleOAuthProvider>
   );

@@ -70,6 +70,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
           firstName: firstName,
           lastName: lastName,
           googleId: googleId,
+          role: 'USER',
         });
         await this.defaultCategoriesService.ensureForUser(newUser.id);
 

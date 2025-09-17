@@ -14,6 +14,7 @@ export class CreateGoogleUserProvider {
     try {
       const user = this.userRepository.create({
         ...googleUser,
+        role: 'USER',
       });
       return await this.userRepository.save(user);
     } catch (error) {

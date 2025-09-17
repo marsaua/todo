@@ -15,7 +15,7 @@ export default function ProtectedLayout({
   if (isLoading) return <>Loading…</>;
   if (isError || !data) return null;
   return (
-    <AsideMenu categories={data.data} userName={user?.name}>
+    <AsideMenu categories={data.data} userName={user?.name} role={user?.role}>
       {children}
     </AsideMenu>
   );

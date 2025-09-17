@@ -14,9 +14,7 @@ async function bootstrap() {
     origin: (origin, cb) => {
       const allowlist = [
         'http://localhost:3000',
-        'https://todo-ki18.vercel.app',
-        'https://todo-ki18-git-main-marsauas-projects.vercel.app',
-        'https://todo-ki18-2sjbokhzb-marsauas-projects.vercel.app',
+        'https://abrakadabramarsa.space',
       ];
       const isAllowed =
         !origin || allowlist.includes(origin) || /\.vercel\.app$/.test(origin);

@@ -12,8 +12,8 @@ import { Auth } from '../decorators/auth.decorator';
 import { AuthType } from '../enums/auth-type';
 import { Response } from 'express';
 
-@Auth(AuthType.None)
 @Controller('auth/google-authentication')
+@Auth(AuthType.None)
 export class GoogleAuthenticationController {
   constructor(
     /**
@@ -24,6 +24,7 @@ export class GoogleAuthenticationController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @Auth(AuthType.None)
   async authenticate(
     @Body() googleTokenDto: GoogleTokenDto,
     @Res({ passthrough: true }) res: Response,
