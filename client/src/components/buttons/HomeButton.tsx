@@ -1,10 +1,14 @@
 "use client";
-import { Button } from "@mui/material";
+import { Box, Link } from "@mui/material";
 
 export default function HomeButton() {
   return (
-    <Button variant="outlined" href="/">
-      Go Home
-    </Button>
+    <Link href="/">
+      <Box
+        component="img"
+        src="logo.png"
+        sx={{ width: "100px", margin: "20px" }}
+      />
+    </Link>
   );
 }

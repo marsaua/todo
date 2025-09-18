@@ -7,8 +7,13 @@ export const invitationApi = {
     });
   },
   redeemInvitation: async (token: string) => {
-    return await fetchWithAuth("POST", "invitation/redeem", {
-      token,
-    });
+    try {
+      return await fetchWithAuth("POST", "invitation/redeem", {
+        token,
+      });
+    } catch (error) {
+      console.error("Error redeeming invitation:", error);
+      throw error;
+    }
   },
 };

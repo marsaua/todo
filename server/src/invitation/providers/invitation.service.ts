@@ -3,6 +3,7 @@ import {
   Injectable,
   ForbiddenException,
   BadRequestException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource, DeepPartial } from 'typeorm';
@@ -84,34 +85,52 @@ export class InvitationService {
     return { ok: true };
   }
 
-  async redeem(token: string, currentUserId: number) {
+  async redeem(token: string, currentUser: ActiveUserType) {
     return this.ds.transaction(async (trx) => {
       const repo = trx.getRepository(Invitation);
       const subRepo = trx.getRepository(Subscription);
+      const norm = (s?: string) => (s ?? '').trim().toLowerCase();
+
+      if (!currentUser || currentUser.role !== 'USER') {
+        throw new UnauthorizedException('Login required');
+      }
 
       const inv = await repo.findOne({
         where: { token },
         relations: ['company'],
       });
       if (!inv) throw new BadRequestException('Invalid invite');
-      if (inv.usedAt) return { ok: true };
-      if (inv.expiresAt < new Date())
+
+      if (inv.usedAt) {
+        return { ok: false, reason: 'used' as const };
+      }
+
+      if (inv.expiresAt < new Date()) {
         throw new BadRequestException('Invite expired');
+      }
+
+      if (norm(currentUser.email) !== norm(inv.email)) {
+        throw new ForbiddenException(
+          'This invite belongs to a different email',
+        );
+      }
+
       await subRepo.upsert(
         {
           company: { id: inv.company.id } as DeepPartial<Company>,
-          user: { id: currentUserId } as DeepPartial<UserNext>,
+          user: { id: currentUser.sub } as DeepPartial<UserNext>,
           usedAt: new Date(),
-          usedByUserId: currentUserId,
+          usedByUserId: currentUser.sub,
         },
         ['company', 'user'],
       );
 
       await repo.update(inv.id, {
         usedAt: new Date(),
-        usedByUserId: currentUserId,
+        usedByUserId: currentUser.sub,
       });
-      return { ok: true };
+
+      return { ok: true as const };
     });
   }
 }

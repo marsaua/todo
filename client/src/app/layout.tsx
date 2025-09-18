@@ -18,7 +18,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           strategy="beforeInteractive" // <- ключове
         /> */}
       </head>
-      <body>
+      <body style={{ margin: 0 }}>
         <ReactQueryProvider>
           <AppRouterCacheProvider>
             <NotificationProvider>

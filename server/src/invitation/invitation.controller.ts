@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { InvitationService } from './providers/invitation.service';
 import { ActiveUser } from 'src/auth/decorators/active-user.decorator';
 import { ActiveUserType } from 'src/auth/enums/active-user-type';
@@ -21,6 +21,8 @@ export class InvitationController {
     @Body() { token }: { token: string },
     @ActiveUser() user: ActiveUserType,
   ) {
-    await this.invitationService.redeem(token, user.sub);
+    // service кидає 401/403/409/410/400 – Nest сам віддасть JSON з цими статусами
+    await this.invitationService.redeem(token, user);
+    return { ok: true }; // 200
   }
 }

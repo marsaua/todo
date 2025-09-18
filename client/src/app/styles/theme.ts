@@ -2,20 +2,10 @@ import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
   palette: {
-    primary: {
-      main: "#1976d2",
-      light: "#42a5f5",
-      dark: "#1565c0",
-    },
-    secondary: {
-      main: "#dc004e",
-      light: "#ff4081",
-      dark: "#c51162",
-    },
-    background: {
-      default: "#f5f5f5",
-      paper: "#ffffff",
-    },
+    primary: { main: "#EAD336", dark: "#FFFFFF", contrastText: "#040100" },
+    secondary: { main: "#FFFFFF", dark: "#EAD336", contrastText: "#040100" },
+    background: { default: "#fff8ea", paper: "#ffffff" },
+    text: { primary: "#040100" },
   },
   typography: {
     fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -42,6 +32,9 @@ export const theme = createTheme({
       fontSize: "0.875rem",
     },
   },
+  shape: { borderRadius: 8 },
+  spacing: 8,
+
   components: {
     MuiLink: {
       styleOverrides: {
@@ -60,31 +53,59 @@ export const theme = createTheme({
         },
       },
     },
-    MuiButton: {
+
+    MuiButtonBase: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
-          textTransform: "none",
-          padding: "8px 16px",
-        },
-        containedPrimary: {
-          boxShadow: "none",
-          "&:hover": {
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          "& .MuiTouchRipple-child": {
+            backgroundColor: "#EAD336",
+          },
+          "& .MuiTouchRipple-rippleVisible": {
+            opacity: 0.45,
           },
         },
       },
     },
-    MuiPaper: {
+
+    MuiCssBaseline: {
       styleOverrides: {
-        root: {
-          borderRadius: 8,
-        },
+        ".MuiTouchRipple-child": { backgroundColor: "#EAD336" },
+        ".MuiTouchRipple-rippleVisible": { opacity: 0.45 },
       },
     },
+
+    MuiButton: {
+      defaultProps: { disableElevation: true },
+      styleOverrides: {
+        root: ({ theme }) => ({
+          borderRadius: 8,
+          textTransform: "none",
+          padding: "8px 16px",
+          fontWeight: 600,
+          border: `1px solid ${theme.palette.primary.main}`,
+          "&& .MuiTouchRipple-child": { backgroundColor: "#EAD336" },
+        }),
+        containedPrimary: ({ theme }) => ({
+          boxShadow: "none",
+          backgroundColor: theme.palette.primary.main,
+          border: `1px solid ${theme.palette.primary.main}`,
+          color: theme.palette.text.primary,
+          "&:hover": {
+            boxShadow: "none",
+            backgroundColor: "inherit",
+          },
+        }),
+        outlinedPrimary: ({ theme }) => ({
+          backgroundColor: "transparent",
+          border: `1px solid ${theme.palette.primary.main}`,
+          color: theme.palette.text.primary,
+          "&:hover": {
+            backgroundColor: theme.palette.primary.main,
+          },
+        }),
+      },
+    },
+
+    MuiPaper: { styleOverrides: { root: { borderRadius: 8 } } },
   },
-  shape: {
-    borderRadius: 8,
-  },
-  spacing: 8,
 });

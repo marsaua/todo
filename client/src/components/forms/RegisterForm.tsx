@@ -45,7 +45,7 @@ export default function RegisterForm() {
         padding: "20px",
         border: "1px solid #ccc",
         borderRadius: "5px",
-        marginTop: "20px",
+        marginY: "20px",
       }}
       onSubmit={handleRegister}
     >
