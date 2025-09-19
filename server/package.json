@@ -23,7 +23,6 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
-    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -39,7 +38,6 @@
     "google-auth-library": "^10.2.0",
     "joi": "^17.13.3",
     "mailtrap": "^4.2.0",
-    "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
