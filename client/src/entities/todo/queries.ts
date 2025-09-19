@@ -42,6 +42,7 @@ export function useAddTodoMutation() {
       title: string;
       content: string;
       categoryId: number;
+      date: string;
     }) => addTodo(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.todos.listRoot() }),
     onError: (error) => error,
@@ -56,7 +57,12 @@ export function useUpdateTodoMutation() {
       data,
     }: {
       id: number;
-      data: { title: string; content: string; categoryId: number };
+      data: {
+        title: string;
+        content: string;
+        categoryId: number;
+        date: string;
+      };
     }) => updateTodo(id, data),
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.todos.listRoot() }),
     onError: (error) => error,

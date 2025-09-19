@@ -5,7 +5,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import ReactQueryProvider from "@/lib/react-query-provider";
 // import Script from "next/script";
 import { NotificationProvider } from "@/context/NotificationContext";
-
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import "dayjs/locale/uk";
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -19,13 +21,15 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         /> */}
       </head>
       <body style={{ margin: 0 }}>
-        <ReactQueryProvider>
-          <AppRouterCacheProvider>
-            <NotificationProvider>
-              <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
-            </NotificationProvider>
-          </AppRouterCacheProvider>
-        </ReactQueryProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="uk">
+          <ReactQueryProvider>
+            <AppRouterCacheProvider>
+              <NotificationProvider>
+                <ThemeProvider theme={theme}>{props.children}</ThemeProvider>
+              </NotificationProvider>
+            </AppRouterCacheProvider>
+          </ReactQueryProvider>
+        </LocalizationProvider>
       </body>
     </html>
   );

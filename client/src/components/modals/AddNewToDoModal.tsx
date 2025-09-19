@@ -19,12 +19,8 @@ import { useNotification } from "@/context/NotificationContext";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAddTodoMutation } from "@/entities/todo/queries";
 import { useCategoriesQuery } from "@/entities/category/queries";
-
-type Category = {
-  id: number;
-  title: string;
-  color: string;
-};
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs, { Dayjs } from "dayjs";
 
 export default function AddNewToDoModal({
   open,
@@ -37,6 +33,8 @@ export default function AddNewToDoModal({
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const { showSuccess, showError } = useNotification();
+  const [date, setDate] = useState<Dayjs>(dayjs(Date.now()));
+
   const queryClient = useQueryClient();
 
   const addTodoMutation = useAddTodoMutation();
@@ -44,7 +42,12 @@ export default function AddNewToDoModal({
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     addTodoMutation.mutate(
-      { title, content, categoryId: Number(categoryId) },
+      {
+        title,
+        content,
+        categoryId: Number(categoryId),
+        date: date.toISOString(),
+      },
       {
         onSuccess: () => {
           showSuccess("Todo added successfully");
@@ -52,6 +55,7 @@ export default function AddNewToDoModal({
           setTitle("");
           setContent("");
           setCategoryId("");
+          setDate(dayjs(Date.now()));
           queryClient.invalidateQueries({ queryKey: ["todos"] });
         },
         onError: (error) => {
@@ -114,6 +118,12 @@ export default function AddNewToDoModal({
                 </MenuItem>
               ))}
             </Select>
+            <DatePicker
+              defaultValue={dayjs(Date.now())}
+              label="Date"
+              value={date}
+              onChange={(newDate) => setDate(newDate as Dayjs)}
+            />
           </FormControl>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>

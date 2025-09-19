@@ -48,11 +48,12 @@ export const addTodo = (data: {
   title: string;
   content: string;
   categoryId: number;
+  date: string;
 }) => fetchWithAuth<Todo>("POST", "todos", data);
 
 export const updateTodo = (
   id: number,
-  data: { title: string; content: string; categoryId: number }
+  data: { title: string; content: string; categoryId: number; date: string }
 ) => fetchWithAuth<Todo>("PUT", `todos/${id}`, data);
 
 export const deleteTodo = (id: number) =>

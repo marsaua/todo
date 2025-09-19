@@ -1,4 +1,5 @@
 import ToDoList from "@/components/ToDoList";
+import DatePickerComponent from "@/components/DatePickerComponent";
 
 export default async function HomePage({
   searchParams,
@@ -9,6 +10,10 @@ export default async function HomePage({
   const pageInt = Number(params.page ?? "1");
   const limitInt = Number(params.limit ?? "5");
   const categoryId = Number(params.categoryId ?? "0");
-
-  return <ToDoList page={pageInt} limit={limitInt} categoryId={categoryId} />;
+  return (
+    <>
+      <DatePickerComponent />
+      <ToDoList page={pageInt} limit={limitInt} categoryId={categoryId} />
+    </>
+  );
 }
