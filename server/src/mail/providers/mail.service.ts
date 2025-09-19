@@ -46,7 +46,7 @@ export class MailService {
         from: sender,
         to: recipients,
         subject: 'Welcome to our app!',
-        html: this.getWelcomeTemplate(user.email),
+        html: this.getWelcomeTemplate(user.name || 'User'),
       });
       console.log('Welcome email sent successfully to:', user.email);
     } catch (error) {
@@ -86,12 +86,12 @@ export class MailService {
     }
   }
 
-  private getWelcomeTemplate(email: string): string {
+  private getWelcomeTemplate(name: string): string {
     const loginUrl = `${process.env.FRONTEND_URL}/home`;
 
     return `
       <h1>Welcome to our app!</h1>
-      <p style="color: red; font-size: 20px; font-weight: bold;">Hi ${email}</p>
+      <p style="color: red; font-size: 20px; font-weight: bold;">Hi ${name}</p>
       <p>Click <a href="${loginUrl}">here</a> to login</p>
       <p>Or use this link: ${loginUrl}</p>
       <p>Best regards, <br> Your App Team</p>
@@ -101,8 +101,11 @@ export class MailService {
     `;
   }
 
-  private getInvitationTemplate(email: string, token: string): string {
-    const loginUrl = `${process.env.FRONTEND_URL}/subscribe?token=${token}`;
+  private getInvitationTemplate(
+    email: string,
+    invitationToken: string,
+  ): string {
+    const loginUrl = `${process.env.FRONTEND_URL}/subscribe?token=${invitationToken}`;
 
     return `
       <h1>Invitation</h1>
