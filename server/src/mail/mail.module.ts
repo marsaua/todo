@@ -13,8 +13,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
         return {
           transport: {
             host: config.get<string>('appConfig.mailerHost'),
-            secure: false,
-            requireTLS: true,
+            secure: true,
             port: parseInt(
               config.get<string>('appConfig.mailerPort') ?? '587',
               10,
