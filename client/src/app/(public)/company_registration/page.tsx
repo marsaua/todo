@@ -17,16 +17,21 @@ export default function CompanyRegistrationPage() {
       <Container
         sx={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          py: 4,
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          justifyItems: "center",
+          py: 4,
+          position: { xs: "normal", md: "absolute" },
+          top: { xs: "normal", md: "50%" },
+          left: { xs: "normal", md: "50%" },
+          transform: { xs: "normal", md: "translate(-50%, -50%)" },
         }}
       >
-        <Box component="img" src="company.png" sx={{ width: "100%" }} />
+        <Box
+          component="img"
+          src="company.png"
+          sx={{ width: "100%", maxWidth: "500px" }}
+        />
         <Box
           sx={{
             display: "flex",
@@ -35,7 +40,9 @@ export default function CompanyRegistrationPage() {
             alignItems: "center",
           }}
         >
-          <Typography variant="h1">Registrate your company</Typography>
+          <Typography variant="h1" sx={{ textAlign: "center" }}>
+            Registrate your company
+          </Typography>
           <CompanyRegisterForm />
           <Typography variant="body1" color="initial">
             Already have an account?{" "}

@@ -18,13 +18,14 @@ export default function RegistrationPage() {
       <Container
         sx={{
           display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          py: 4,
+          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
           alignItems: "center",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          justifyItems: "center",
+          py: 4,
+          position: { xs: "normal", md: "absolute" },
+          top: { xs: "normal", md: "50%" },
+          left: { xs: "normal", md: "50%" },
+          transform: { xs: "normal", md: "translate(-50%, -50%)" },
         }}
       >
         <Box>
@@ -52,7 +53,7 @@ export default function RegistrationPage() {
         <Box
           component="img"
           src="reg.png"
-          sx={{ width: "100%", height: "auto" }}
+          sx={{ width: "100%", height: "auto", maxWidth: "500px" }}
         />
       </Container>
     </Box>
