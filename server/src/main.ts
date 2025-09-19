@@ -15,6 +15,7 @@ async function bootstrap() {
       const allowlist = [
         'http://localhost:3000',
         'https://abrakadabramarsa.space',
+        'https://www.abrakadabramarsa.space',
       ];
       const isAllowed =
         !origin || allowlist.includes(origin) || /\.vercel\.app$/.test(origin);
@@ -53,6 +54,6 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  await app.listen(process.env.PORT || 4000);
+  await app.listen(process.env.PORT || 4000, '0.0.0.0');
 }
 bootstrap();
