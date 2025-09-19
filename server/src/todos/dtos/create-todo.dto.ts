@@ -12,6 +12,14 @@ export class CreateTodoDto {
   title: string;
 
   @ApiProperty({
+    description: 'Todo date',
+    example: '2025-09-19T16:03:11.000Z',
+  })
+  @IsString()
+  @MaxLength(516)
+  date: string;
+
+  @ApiProperty({
     description: 'Todo content',
     example: 'Todo content',
   })

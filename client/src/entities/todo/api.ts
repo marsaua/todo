@@ -24,11 +24,19 @@ export type TodosResponse = {
   };
 };
 
-export const getTodos = (page: number, limit: number, categoryId?: number) => {
+export const getTodos = (
+  page: number,
+  limit: number,
+  categoryId?: number,
+  startDate?: string,
+  endDate?: string
+) => {
   const categoryQuery = categoryId ? `&categoryId=${categoryId}` : "";
+  const startDateQuery = startDate ? `&startDate=${startDate}` : "";
+  const endDateQuery = endDate ? `&endDate=${endDate}` : "";
   return fetchWithAuth<TodosResponse>(
     "GET",
-    `todos?page=${page}&limit=${limit}${categoryQuery}`
+    `todos?page=${page}&limit=${limit}${categoryQuery}${startDateQuery}${endDateQuery}`
   );
 };
 

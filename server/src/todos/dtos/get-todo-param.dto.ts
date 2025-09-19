@@ -9,6 +9,7 @@ class GetTodosParamDto {
   @Type(() => Date)
   @Transform(
     ({ value }) => {
+      if (value == null) return undefined;
       const d = new Date(value);
       return isNaN(d.getTime()) ? undefined : d;
     },
@@ -27,7 +28,7 @@ class GetTodosParamDto {
     { toClassOnly: true },
   )
   @IsDate()
-  endDate?: Date;
+  endDate: Date;
 
   @IsOptional()
   @Type(() => Number)

@@ -87,6 +87,8 @@ export default function ToDoList({
     page,
     limit,
     categoryId,
+    startDate: searchParams.get("startDate") ?? undefined,
+    endDate: searchParams.get("endDate") ?? undefined,
   });
 
   if (isLoading || categoriesLoading) return <p>Loading...</p>;

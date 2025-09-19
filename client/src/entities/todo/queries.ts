@@ -11,8 +11,22 @@ export const qk = {
   todos: {
     root: () => ["todos"] as const,
     listRoot: () => ["todos", "list"] as const,
-    list: (page: number, limit: number, categoryId?: number) =>
-      ["todos", "list", page, limit, categoryId ?? null] as const,
+    list: (
+      page: number,
+      limit: number,
+      categoryId?: number,
+      startDate?: string,
+      endDate?: string
+    ) =>
+      [
+        "todos",
+        "list",
+        page,
+        limit,
+        categoryId ?? null,
+        startDate ?? null,
+        endDate ?? null,
+      ] as const,
     byId: (id: number) => ["todos", "byId", id] as const,
   },
 };
@@ -21,14 +35,18 @@ export function useTodosQuery({
   page,
   limit,
   categoryId,
+  startDate,
+  endDate,
 }: {
   page: number;
   limit: number;
   categoryId?: number;
+  startDate?: string;
+  endDate?: string;
 }) {
   return useQuery({
-    queryKey: qk.todos.list(page, limit, categoryId),
-    queryFn: () => getTodos(page, limit, categoryId),
+    queryKey: qk.todos.list(page, limit, categoryId, startDate, endDate),
+    queryFn: () => getTodos(page, limit, categoryId, startDate, endDate),
     placeholderData: (prev) => prev,
     retry: 1,
     refetchOnWindowFocus: false,

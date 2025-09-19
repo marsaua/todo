@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { AuthorType, Todo } from '../todo.entity';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateTodoDto } from '../dtos/create-todo.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateTodoDto } from '../dtos/update-todo.dto';
@@ -19,6 +19,7 @@ import { Inject } from '@nestjs/common';
 import { forwardRef } from '@nestjs/common';
 import { ActiveUserType } from 'src/auth/enums/active-user-type';
 import { Company } from 'src/companies/company.entity';
+import { toYMD } from 'src/utils/date';
 
 @Injectable()
 export class TodosService {
@@ -40,56 +41,34 @@ export class TodosService {
     postQuery: GetTodosDto,
     user: ActiveUserType,
   ): Promise<Paginated<Todo> | null> {
-    let todos: Paginated<Todo> | null = null;
-    console.log(postQuery);
-    if (user.role === 'USER') {
-      try {
-        const where: FindOptionsWhere<Todo> = { authorUserId: user.sub };
+    const whereBase: FindOptionsWhere<Todo> = {};
+    if (user.role === 'USER') whereBase.authorUserId = user.sub;
+    if (user.role === 'COMPANY') whereBase.authorCompanyId = user.sub;
 
-        if (postQuery.categoryId) {
-          where.categoryId = postQuery.categoryId;
-        }
-        todos = await this.paginationProvider.paginateQuery(
-          postQuery,
-          this.todoRepository,
-          {
-            where,
-            relations: ['category', 'authorUser', 'authorCompany'],
-            order: { createdAt: 'DESC' },
-          },
-        );
-      } catch (error) {
-        console.log(error);
-        throw new InternalServerErrorException(
-          'Something went wrong. Please try again later.',
-        );
-      }
-    } else if (user.role === 'COMPANY') {
-      try {
-        const where: FindOptionsWhere<Todo> = { authorCompanyId: user.sub };
+    if (postQuery.categoryId) whereBase.categoryId = postQuery.categoryId;
 
-        if (postQuery.categoryId) {
-          where.categoryId = postQuery.categoryId;
-        }
-        todos = await this.paginationProvider.paginateQuery(
-          postQuery,
-          this.todoRepository,
-          {
-            where,
-            relations: ['category', 'authorUser', 'authorCompany'],
-            order: { createdAt: 'DESC' },
-          },
-        );
-      } catch (error) {
-        console.log(error);
-        throw new InternalServerErrorException(
-          'Something went wrong. Please try again later.',
-        );
-      }
+    const start = postQuery.startDate ? toYMD(postQuery.startDate) : undefined;
+    const end = postQuery.endDate ? toYMD(postQuery.endDate) : undefined;
+
+    if (start && end && start > end) {
+      throw new BadRequestException('startDate must be <= endDate');
     }
-    return todos;
-  }
 
+    const where: FindOptionsWhere<Todo> = {
+      ...whereBase,
+      date: start && end ? Between(start, end) : undefined,
+    };
+
+    return this.paginationProvider.paginateQuery(
+      postQuery,
+      this.todoRepository,
+      {
+        where,
+        relations: ['category', 'authorUser', 'authorCompany'],
+        order: { createdAt: 'DESC' },
+      },
+    );
+  }
   public async getCompanyTodos(postQuery: GetTodosDto) {
     let todos: Paginated<Todo> | null = null;
     try {

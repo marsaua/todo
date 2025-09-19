@@ -52,4 +52,7 @@ export class Todo {
   @ManyToOne(() => Company, (c) => c.todos, { eager: true, nullable: true })
   @JoinColumn({ name: 'authorCompanyId' })
   authorCompany?: Company | null;
+
+  @Column({ type: 'date', default: () => 'CURRENT_DATE' })
+  date: string;
 }
