@@ -14,17 +14,23 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
           transport: {
             host: config.get<string>('appConfig.mailerHost'),
             secure: false,
+            requireTLS: true,
             port: parseInt(
-              config.get<string>('appConfig.mailerPort') ?? '2525',
+              config.get<string>('appConfig.mailerPort') ?? '587',
               10,
             ),
             auth: {
               user: config.get<string>('appConfig.smtpUsername'),
               pass: config.get<string>('appConfig.smtpPassword'),
             },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 20000,
+            logger: true,
+            debug: true,
           },
           defaults: {
-            from: `"My Blog" <no-repy@nestjs-blog.com>`,
+            from: `"My Blog" <no-reply@abrakadabramarsa.space>`,
           },
           template: {
             dir: join(__dirname, 'templates'),
