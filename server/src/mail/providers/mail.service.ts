@@ -29,6 +29,7 @@ export class MailService {
   ): Promise<void> {
     await this.mailerService.sendMail({
       to: email,
+      from: `Support <support@abrakadabramarsa.space>`,
       subject: 'Invitation to our app!',
       template: 'invitation',
       context: {

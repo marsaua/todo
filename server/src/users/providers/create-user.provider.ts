@@ -59,12 +59,9 @@ export class CreateUserProvider {
       console.log(error);
       throw new RequestTimeoutException('User not created');
     }
-    try {
-      await this.mailService.sendWelcomeEmail(user);
-    } catch (error) {
-      console.log(error);
-      throw new RequestTimeoutException('User not created');
-    }
+    this.mailService.sendWelcomeEmail(user).catch((error) => {
+      console.warn('[MAIL] welcome failed:', error?.code ?? error);
+    });
     return user;
   }
 }
