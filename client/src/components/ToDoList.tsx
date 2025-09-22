@@ -20,7 +20,7 @@ interface TabPanelProps {
 function CustomTabPanel({ children, value, index, ...other }: TabPanelProps) {
   return (
     <div role="tabpanel" hidden={value !== index} {...other}>
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }
@@ -70,13 +70,13 @@ export default function ToDoList({
 
     if (newValue === "me") {
       setCompanyId(null);
-      router.push(setQuery("companyId", null)); // видаляємо параметр
+      router.push(setQuery("companyId", null));
       return;
     }
 
     const nextCompanyId = Number(newValue);
     setCompanyId(nextCompanyId);
-    router.push(setQuery("companyId", nextCompanyId)); // той самий pathname, інші query збережено
+    router.push(setQuery("companyId", nextCompanyId));
   };
 
   const {
@@ -107,8 +107,6 @@ export default function ToDoList({
           />
         ))}
       </Tabs>
-
-      {/* Панель для моїх тудушок */}
       <CustomTabPanel value={value} index="me">
         <Box
           sx={{
@@ -161,7 +159,6 @@ export default function ToDoList({
           />
         </CustomTabPanel>
       ))}
-
       {/* Якщо пізніше захочеш показувати компанійські тудушки тут же —
           додай ще <CustomTabPanel value={value} index={sub.companyId}> з відповідним контентом */}
     </Box>

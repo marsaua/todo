@@ -69,82 +69,100 @@ export default function AsideMenu({
     setOpen(false);
   };
   const drawer = (
-    <Box>
+    <Box
+      sx={{
+        backgroundColor: theme.palette.background.default,
+        minHeight: "100vh",
+      }}
+    >
       <List>
         <ListItem>
-          <Typography variant="h4">Home</Typography>
+          <Link href="/home">
+            <Box component="img" src="logo.png" width={"100px"} />
+          </Link>
         </ListItem>
       </List>
       <Divider />
-      <Typography sx={{ p: 2, mt: 2, fontWeight: "bold" }}>
-        Hello, {userName}
-      </Typography>
       <Typography sx={{ p: 2, mt: 2, fontWeight: "bold" }}>Tasks</Typography>
-      <List>
-        <ListItem>
-          <Link onClick={() => router.push("/home?categoryId=0")}>
-            All todos
-          </Link>
-        </ListItem>
-        {categories?.map((cat) => (
-          <ListItem
-            key={cat.id}
-            sx={{ display: "flex", alignItems: "center", gap: 2 }}
-          >
-            <Box
-              sx={{
-                minWidth: "20px",
-                minHeight: "20px",
-                backgroundColor: cat.color,
-                borderRadius: "50%",
-                cursor: "pointer",
-                border: "1px solid #ccc",
-              }}
-            ></Box>
-            <Link
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 2,
-                width: "100%",
-              }}
-              onClick={() => router.push(`/home?categoryId=${cat.id}`)}
-            >
-              {cat.title.charAt(0).toUpperCase() + cat.title.slice(1)}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+          minHeight: "calc(100vh - 200px)",
+        }}
+      >
+        <List>
+          <ListItem>
+            <Link onClick={() => router.push("/home?categoryId=0")}>
+              All todos
             </Link>
-            {!["work", "personal"].includes(cat.title.toLowerCase()) && (
-              <DeleteIcon
-                sx={{ cursor: "pointer" }}
-                onClick={() => {
-                  setOpenDelete(true);
-                  setId(cat.id);
-                }}
-              />
-            )}
           </ListItem>
-        ))}
-        <ListItem>
-          <Button variant="text" onClick={handleClickOpen}>
-            Add New List
-          </Button>
-        </ListItem>
-      </List>
-      <LogoutButton />
+          {categories?.map((cat) => (
+            <ListItem
+              key={cat.id}
+              sx={{ display: "flex", alignItems: "center", gap: 2 }}
+            >
+              <Box
+                sx={{
+                  minWidth: "20px",
+                  minHeight: "20px",
+                  backgroundColor: cat.color,
+                  borderRadius: "50%",
+                  cursor: "pointer",
+                  border: "1px solid #ccc",
+                }}
+              ></Box>
+              <Link
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: 2,
+                  width: "100%",
+                }}
+                onClick={() => router.push(`/home?categoryId=${cat.id}`)}
+              >
+                {cat.title.charAt(0).toUpperCase() + cat.title.slice(1)}
+              </Link>
+              {!["work", "personal"].includes(cat.title.toLowerCase()) && (
+                <DeleteIcon
+                  sx={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setOpenDelete(true);
+                    setId(cat.id);
+                  }}
+                />
+              )}
+            </ListItem>
+          ))}
+          <ListItem>
+            <Button
+              variant="contained"
+              onClick={handleClickOpen}
+              sx={{ width: "100%" }}
+            >
+              Add New List
+            </Button>
+          </ListItem>
+        </List>
+        <LogoutButton />
+      </Box>
     </Box>
   );
 
   return (
     <>
-      <Box sx={{ display: "flex", width: "100%" }}>
-        <Box
-          sx={{ display: "flex", flexDirection: "column", flex: "0 0 auto" }}
-        >
+      <Box sx={{ display: { xs: "block", sm: "flex", flexDirection: "row" } }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Link href="/home">
+            <Box component="img" src="logo.png" width={"100px"} />
+          </Link>
           <Toolbar sx={{ justifyContent: "flex-end" }}>
             <IconButton
               color="inherit"
               aria-label="open drawer"
-              edge="start"
+              edge="end"
               onClick={handleDrawerToggle}
               sx={{ display: { sm: "none" } }}
             >
@@ -154,7 +172,7 @@ export default function AsideMenu({
           {isMobile ? (
             <Drawer
               variant="temporary"
-              anchor="left"
+              anchor="right"
               open={mobileOpen}
               onClose={handleDrawerToggle}
               ModalProps={{
@@ -209,7 +227,7 @@ export default function AsideMenu({
           sx={{
             flexGrow: 1,
             p: 3,
-            width: { sm: `calc(100% - 250px)`, xs: "100%" },
+            width: { sm: `calc(100% - 250px)` },
           }}
         >
           <Toolbar />

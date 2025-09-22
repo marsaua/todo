@@ -8,6 +8,8 @@ import { NotificationProvider } from "@/context/NotificationContext";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import "dayjs/locale/uk";
+import "./globals.css";
+
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">

@@ -20,8 +20,8 @@ export default function LogoutButton() {
     });
   };
   return (
-    <Box sx={{ ml: "26px" }}>
-      <Button variant="outlined" onClick={handleLogout}>
+    <Box sx={{ px: "16px", py: "8px" }}>
+      <Button variant="outlined" onClick={handleLogout} sx={{ width: "100%" }}>
         Logout
       </Button>
     </Box>

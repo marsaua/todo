@@ -4,6 +4,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Box, Typography, Button } from "@mui/material";
 
 const formatDate = (d: Dayjs) => d.format("YYYY-MM-DD");
 
@@ -66,10 +67,38 @@ export default function DatePickerComponent() {
     replaceParams(start ?? v, v);
   };
 
+  const handleTodayClick = () => {
+    replaceParams(today, today);
+    setStart(today);
+    setEnd(today);
+  };
+
   return (
     <>
-      <DatePicker label="Start" value={start} onChange={onStartChange} />
-      <DatePicker label="End" value={end} onChange={onEndChange} />
+      <Typography sx={{ mb: 4 }}>Filter your tasks by date.</Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { md: "row", xs: "column" },
+          gap: 2,
+        }}
+      >
+        <DatePicker
+          label="Start"
+          value={start}
+          onChange={onStartChange}
+          sx={{ width: "100%" }}
+        />
+        <DatePicker
+          label="End"
+          value={end}
+          onChange={onEndChange}
+          sx={{ width: "100%" }}
+        />
+        <Button variant="outlined" onClick={handleTodayClick}>
+          Today
+        </Button>
+      </Box>
     </>
   );
 }

@@ -2,6 +2,8 @@
 import AsideMenu from "@/components/AsideMenu";
 import { useCategoriesQuery } from "@/entities/category/queries";
 import { useCurrentUser } from "@/entities/user/queries";
+import { Box } from "@mui/material";
+import { theme } from "@/app/styles/theme";
 export default function ProtectedLayout({
   children,
 }: {
@@ -15,8 +17,10 @@ export default function ProtectedLayout({
   if (isLoading) return <>Loading…</>;
   if (isError || !data) return null;
   return (
-    <AsideMenu categories={data.data} userName={user?.name} role={user?.role}>
-      {children}
-    </AsideMenu>
+    <Box sx={{ backgroundColor: theme.palette.background.default }}>
+      <AsideMenu categories={data.data} userName={user?.name} role={user?.role}>
+        {children}
+      </AsideMenu>
+    </Box>
   );
 }
