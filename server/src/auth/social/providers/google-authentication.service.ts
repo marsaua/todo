@@ -53,7 +53,9 @@ export class GoogleAuthenticationService implements OnModuleInit {
         family_name: lastName,
       } = loginTicket.getPayload()!;
       // Find the user in the database using the googleId
-      const user = await this.usersService.findOneByGoogleId(googleId);
+      // const user = await this.usersService.findOneByGoogleId(googleId);
+      if (!email) throw new UnauthorizedException();
+      const user = await this.usersService.findOneUserByEmail(email);
 
       // If user id found generate the tokens
       if (user) {
