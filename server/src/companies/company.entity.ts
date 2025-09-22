@@ -47,6 +47,13 @@ export class Company {
   })
   companyLogo?: string;
 
+  @Column({
+    nullable: false,
+    length: 255,
+    default: 'COMPANY',
+  })
+  role: 'COMPANY';
+
   @OneToMany(() => Todo, (todo) => todo.authorCompany)
   todos?: Todo[];
 

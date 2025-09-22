@@ -44,7 +44,6 @@ export class TodosService {
     const whereBase: FindOptionsWhere<Todo> = {};
     if (user.role === 'USER') whereBase.authorUserId = user.sub;
     if (user.role === 'COMPANY') whereBase.authorCompanyId = user.sub;
-
     if (postQuery.categoryId) whereBase.categoryId = postQuery.categoryId;
 
     const start = postQuery.startDate ? toYMD(postQuery.startDate) : undefined;

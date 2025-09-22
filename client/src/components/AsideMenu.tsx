@@ -145,6 +145,17 @@ export default function AsideMenu({
               Add New List
             </Button>
           </ListItem>
+          <ListItem>
+            {(role === "COMPANY" || !role) && (
+              <Button
+                variant="outlined"
+                onClick={() => setOpenInvitation(true)}
+                sx={{ width: "100%" }}
+              >
+                Invite the user
+              </Button>
+            )}
+          </ListItem>
         </List>
         <LogoutButton />
       </Box>
@@ -155,20 +166,28 @@ export default function AsideMenu({
     <>
       <Box sx={{ display: { xs: "block", sm: "flex", flexDirection: "row" } }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-          <Link href="/home">
-            <Box component="img" src="logo.png" width={"100px"} />
-          </Link>
-          <Toolbar sx={{ justifyContent: "flex-end" }}>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              edge="end"
-              onClick={handleDrawerToggle}
-              sx={{ display: { sm: "none" } }}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Toolbar>
+          <Box
+            sx={{
+              display: { xs: "flex", sm: "none" },
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <Link href="/home">
+              <Box component="img" src="logo.png" width={"100px"} />
+            </Link>
+            <Toolbar sx={{ justifyContent: "flex-end" }}>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                edge="end"
+                onClick={handleDrawerToggle}
+                sx={{ display: { sm: "none" } }}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Toolbar>
+          </Box>
           {isMobile ? (
             <Drawer
               variant="temporary"
@@ -188,14 +207,6 @@ export default function AsideMenu({
               }}
             >
               {drawer}
-              {(role === "COMPANY" || !role) && (
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenInvitation(true)}
-                >
-                  Invite the user
-                </Button>
-              )}
             </Drawer>
           ) : (
             <Drawer
@@ -211,14 +222,6 @@ export default function AsideMenu({
               }}
             >
               {drawer}
-              {(role === "COMPANY" || !role) && (
-                <Button
-                  variant="outlined"
-                  onClick={() => setOpenInvitation(true)}
-                >
-                  Invite the user
-                </Button>
-              )}
             </Drawer>
           )}
         </Box>
